@@ -54,16 +54,16 @@ Succesfully logging in with the `admin` username/password will look like:
 
 You'll see a corporate logo (the default is "Cloud Foundry"), the title "Where to?", and .... a void of emptiness. This homepage of the UAA can be filled with "tiles" - icons/names for your internal corporate applications that users can possible use. We will revisit this later.
 
-## Application Client Authentication
+## Authenticating a third-party application
 
 The web interface above is the UAA itself. As a user (such as `admin`), you can login. That is, you can authenticate that you are `admin`, or later when we create more users you can authenticate that you are one of those users. Conceptually, each human knows how to authenticate as a single UAA user.
 
-The `uaa` CLI is a separate application from the UAA. We want to configure this separate application to target our UAA, to authenticate as a valid application, and to interact with the UAA's API.
+The `uaa` CLI is a separate application from the UAA. The UAA refers to third-party applications as "clients". We want to configure this separate application to target our UAA, to authenticate as a valid application, and to interact with the UAA's API.
 
 For convenience the `uaa-deployment auth` command will target and authentication with your UAA:
 
 ```
-uaa-deployment auth
+uaa-deployment auth-client
 ```
 
 Alternately, you can run the `uaa` commands directly:
@@ -80,8 +80,13 @@ You can now use the `uaa` CLI to interact with your UAA.
 To see a list of user accounts in JSON:
 
 ```
-uaa users
 uaa list-users
+```
+
+You can filter the attributes of each user:
+
+```
+uaa list-users --attributes id,userName
 ```
 
 To see the various scopes that the `admin` user is allowed to access:
@@ -111,15 +116,6 @@ notification_preferences.read
 cloud_controller_service_permissions.read
 ```
 
-To see a list of application clients in JSON:
-
-```
-uaa clients
-uaa list-clients
-
-uaa list-clients | jq -r ".[] | {client_id, authorized_grant_types, scope}"
-```
-
 To see the list of groups in JSON:
 
 ```
@@ -129,11 +125,54 @@ uaa list-groups | jq -r ".resources[].displayName" | sort
 
 As a logged in user - by any of the authentication commands - we potentially can ask the UAA "who am I?"
 
+To see a list of application clients in JSON:
+
+```
+uaa list-clients
+
+uaa list-clients | jq -r ".[] | {client_id, authorized_grant_types, scope}"
+```
+
+We've introduced one client so far - `uaa_client` - which we're using currently to allow the `uaa` CLI application to talk to the UAA API. To view its configuraton:
+
+```
+uaa get-client uaa_admin
+```
+
+The output might look like:
+
+```json
+{
+  "client_id": "uaa_admin",
+  "scope": [
+    "uaa.none"
+  ],
+  "resource_ids": [
+    "none"
+  ],
+  "authorized_grant_types": [
+    "client_credentials"
+  ],
+  "authorities": [
+    "clients.read",
+    "password.write",
+    "clients.secret",
+    "clients.write",
+    "uaa.admin",
+    "scim.write",
+    "scim.read"
+  ],
+  "lastModified": 1529652956499
+}
+```
+
+We have authenticated our `uaa` application so we should be able to ask "who am I?":
+
 ```
 uaa userinfo
 ```
 
-If this fails, run the command again with `--verbose`:
+This command fails, so run the command again with `--verbose` to see the error message:
 
 ```
 uaa userinfo --verbose

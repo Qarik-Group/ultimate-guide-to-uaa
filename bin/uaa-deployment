@@ -143,7 +143,7 @@ usage() {
     echo "  env -- sourceable envrionment variables for cli clients"
     echo "  int -- wrapper for 'bosh int' for the bosh manifest"
     echo "  info -- UAA information"
-    echo "  auth -- configures uaa cli"
+    echo "  auth-client -- configures uaa cli as a client only"
     echo "  routes -- add routes for virtualbox"
     exit 1
 }
@@ -275,7 +275,7 @@ _uaac() {
     faketty uaac token client get uaa_admin --secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
 }
 
-_uaa_cli() {
+_uaa_auth_client() {
     faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation
     faketty uaa get-client-credentials-token uaa_admin --client_secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
 }
@@ -402,8 +402,8 @@ case "$1" in
         _uaac "$@"
         ;;
 
-    auth)
-        _uaa_cli "$@"
+    auth-client)
+        _uaa_auth_client "$@"
         ;;
 
     ssh)
