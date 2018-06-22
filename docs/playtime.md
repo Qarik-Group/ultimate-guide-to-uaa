@@ -192,7 +192,47 @@ That is, the `uaa` application is talking directly to the UAA - one application 
 
 The `uaa userinfo` command assumes that the `uaa` application is talking to the UAA on behalf of an authenticated user.
 
-## Authenticating on behalf of a user
+## Authenticating on behalf of a user - via local password
+
+```
+uaa create-client our_uaa_cli -s our_uaa_cli_secret \
+  --authorized_grant_types password,refresh_token \
+  --scope "openid,bosh.admin,bosh.read,bosh.*.admin,bosh.*.read"  \
+  --authorities uaa.none \
+  --access_token_validity 120 \
+  --refresh_token_validity 86400
+```
+
+A user can now provide the `uaa` CLI permission to interact with the UAA on its behalf:
+
+```
+uaa get-password-token uaa_cli -s uaa_cli_secret -u admin -p 2rbaswzllkuy51ymzahz
+```
+
+To demonstrate that the `uaa` is now operating on behalf of the `admin` user:
+
+```
+uaa userinfo
+```
+
+The JSON output will be like:
+
+```json
+{
+  "user_id": "4a7e6e3d-e39c-43f9-9c98-6052eb63109a",
+  "sub": "4a7e6e3d-e39c-43f9-9c98-6052eb63109a",
+  "user_name": "admin",
+  "given_name": "",
+  "family_name": "",
+  "email": "admin",
+  "phone_number": null,
+  "previous_logon_time": 1529658329563,
+  "name": " "
+}
+```
+
+
+## Authenticating on behalf of a user - via web UI
 
 First, register a new UAA client that is designed to allow the `uaa` to be used by normal UAA users.
 
