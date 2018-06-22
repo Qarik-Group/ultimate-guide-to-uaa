@@ -4,6 +4,8 @@ This project is dedicated to making it easy to bring up UAA on a single VM local
 
 This project is hugely influenced by, and code/files copied from, [BUCC](https://github.com/starkandwayne/com).
 
+Also check out the [in-progress walk thru guide](docs/README.md) to using `uaa-deployment` to learn about the UAA, client applications, and users.
+
 To bootstrap UAA inside VirtualBox:
 
 ```plain
