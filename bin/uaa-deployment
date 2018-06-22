@@ -383,6 +383,10 @@ case "$1" in
         _uaac "$@"
         ;;
 
+    auth)
+        _uaac "$@"
+        ;;
+
     ssh)
         shift
         _ssh "$@"
