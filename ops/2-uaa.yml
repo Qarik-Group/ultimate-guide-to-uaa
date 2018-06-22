@@ -66,7 +66,7 @@
           uaa_admin:
             override: true
             authorized-grant-types: client_credentials
-            scope: ""
+            scope: openid
             authorities: clients.read,clients.write,clients.secret,uaa.admin,scim.read,scim.write,password.write
             secret: ((uaa_admin_client_secret))
         login: {client_secret: ((uaa_login_client_secret))}
