@@ -132,7 +132,6 @@ ca_cert() {
     local tmp=$(mktemp -d) # temp fix for https://github.com/cloudfoundry/cf-uaac/issues/60
     local ca_cert_file="${tmp}/ca.pem"
     store_int --path /default_ca/ca > $ca_cert_file
-    store_int --path /credhub_ca/ca >> $ca_cert_file
     echo $ca_cert_file
 }
 
