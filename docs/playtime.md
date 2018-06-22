@@ -244,76 +244,6 @@ The JSON output might be similar to:
 ...
 ```
 
-Each new user is automatically added as a member of various groups:
-
-```
-uaa get-user drnic | jq -r ".groups[].display" | sort
-```
-
-The output might be similar to:
-
-```
-approvals.me
-oauth.approvals
-openid
-password.write
-profile
-roles
-scim.me
-uaa.offline_token
-uaa.user
-user_attributes
-```
-
-To start to learn what authorizations/priveleges each group provides:
-
-```
-uaa list-groups | jq -r ".resources[] | {displayName, description}"
-```
-
-An interesting selection of the output is:
-
-```json
-{
-  "displayName": "openid",
-  "description": "Access profile information, i.e. email, first and last name, and phone number"
-}
-{
-  "displayName": "password.write",
-  "description": "Change your password"
-}
-{
-  "displayName": "uaa.user",
-  "description": "Act as a user in the UAA"
-}
-{
-  "displayName": "scim.userids",
-  "description": "Read user IDs and retrieve users by ID"
-}
-{
-  "displayName": "scim.invite",
-  "description": "Send invitations to users"
-}
-{
-  "displayName": "uaa.none",
-  "description": "Forbid acting as a user"
-}
-```
-
-Comparing the two lists, we see that our `drnic` user will be granted permission to:
-
-* `openid` - Access profile information, i.e. email, first and last name, and phone number
-* `password.write` - Change your own password
-* `uaa.user` - Act as a user in the UAA
-
-From the sample list of available authorization groups, we can note that `drnic` user is not in the following groups:
-
-* `scim.userids` - cannot read the user IDs nor retrieve users by ID
-* `scim.invite` - is not allowed to send invites to other users
-* `uaa.node` - is not forbidden from acting as a user
-
-In the subsequent sections we will allow our new users to "login" and authorize the `uaa` CLI to interact with the UAA on their behalf.
-
 ## Authenticating on behalf of a user - via local password
 
 For the `uaa` CLI application to act on behalf of a user - with the permission of the user - then user will need to authenticate themselves. That is, to prove that they are who they claim to be. The simplest method is for a user to provide the secret password for their UAA user account.
@@ -427,3 +357,113 @@ And update a new `scope` as a comma-separated list:
 ```
 uaa update-client admin --scope uaa.none,openid
 ```
+
+## User permissions
+
+Each new user is automatically added as a member of various groups:
+
+```
+uaa get-user drnic | jq -r ".groups[].display" | sort
+```
+
+The output might be similar to:
+
+```
+approvals.me
+oauth.approvals
+openid
+password.write
+profile
+roles
+scim.me
+uaa.offline_token
+uaa.user
+user_attributes
+```
+
+To start to learn what authorizations/priveleges each group provides:
+
+```
+uaa list-groups | jq -r ".resources[] | {displayName, description}"
+```
+
+An interesting selection of the output is:
+
+```json
+{
+  "displayName": "openid",
+  "description": "Access profile information, i.e. email, first and last name, and phone number"
+}
+{
+  "displayName": "password.write",
+  "description": "Change your password"
+}
+{
+  "displayName": "uaa.user",
+  "description": "Act as a user in the UAA"
+}
+{
+  "displayName": "scim.userids",
+  "description": "Read user IDs and retrieve users by ID"
+}
+{
+  "displayName": "scim.invite",
+  "description": "Send invitations to users"
+}
+{
+  "displayName": "uaa.none",
+  "description": "Forbid acting as a user"
+}
+```
+
+Comparing the two lists, we see that our `drnic` user will be granted permission to:
+
+* `openid` - Access profile information, i.e. email, first and last name, and phone number
+* `password.write` - Change your own password
+* `uaa.user` - Act as a user in the UAA
+
+From the sample list of available authorization groups, we can note that `drnic` user is not in the following groups:
+
+* `scim.userids` - cannot read the user IDs nor retrieve users by ID
+* `scim.invite` - is not allowed to send invites to other users
+* `uaa.node` - is not forbidden from acting as a user
+
+In the subsequent sections we will allow our new users to "login" and authorize the `uaa` CLI to interact with the UAA on their behalf.
+
+## Client permissions
+
+Third-party client applications are also scoped in their ability to interact with the UAA API.
+
+Consider our original client `uaa_admin`:
+
+```
+uaa get-client uaa_admin
+```
+
+The output incldues `scope` and `authorities`:
+
+```json
+{
+  "client_id": "uaa_admin",
+  "scope": [
+    "uaa.none"
+  ],
+  "resource_ids": [
+    "none"
+  ],
+  "authorized_grant_types": [
+    "client_credentials"
+  ],
+  "authorities": [
+    "clients.read",
+    "password.write",
+    "clients.secret",
+    "clients.write",
+    "uaa.admin",
+    "scim.write",
+    "scim.read"
+  ],
+  "lastModified": 1529652956499
+}
+```
+
