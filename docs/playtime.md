@@ -60,6 +60,8 @@ The web interface above is the UAA itself. As a user (such as `admin`), you can 
 
 The `uaa` CLI is a separate application from the UAA. The UAA refers to third-party applications as "clients". We want to configure this separate application to target our UAA, to authenticate as a valid application, and to interact with the UAA's API.
 
+That the `uaa` CLI has a similar name to the UAA API server is confusing. The `uaa` CLI is just one of infinite applications that might want to interact with the UAA API - either directly as a client, or on behalf of the UAA's users.
+
 For convenience the `uaa-deployment auth` command will target and authentication with your UAA:
 
 ```
@@ -192,12 +194,143 @@ That is, the `uaa` application is talking directly to the UAA - one application 
 
 The `uaa userinfo` command assumes that the `uaa` application is talking to the UAA on behalf of an authenticated user.
 
-## Authenticating on behalf of a user - via local password
+## Creating users
 
 ```
+uaa create-user drnic \
+  --email drnic@starkandwayne \
+  --givenName "Dr Nic" \
+  --familyName "Williams" \
+  --password drnic_secret
+```
+
+Once created, we can lookup the user with their username:
+
+```
+uaa get-user drnic
+```
+
+The JSON output might be similar to:
+
+```json
+{
+  "id": "87fde4a5-17f3-4667-a5e2-fff62220c73e",
+  "meta": {
+    "created": "2018-06-22T09:27:10.655Z",
+    "lastModified": "2018-06-22T09:27:10.655Z"
+  },
+  "userName": "drnic",
+  "name": {
+    "familyName": "Williams",
+    "givenName": "Dr Nic"
+  },
+  "emails": [
+    {
+      "value": "drnic@starkandwayne",
+      "primary": false
+    }
+  ],
+  "groups": [
+    {
+      "value": "5a201c79-3265-46a8-873d-8631facdb2a1",
+      "display": "user_attributes",
+      "type": "DIRECT"
+    },
+    {
+      "value": "b07d8fda-aaba-4f3e-9f5c-dca9f7c99e9f",
+      "display": "roles",
+      "type": "DIRECT"
+    },
+...
+```
+
+Each new user is automatically added as a member of various groups:
+
+```
+uaa get-user drnic | jq -r ".groups[].display" | sort
+```
+
+The output might be similar to:
+
+```
+approvals.me
+oauth.approvals
+openid
+password.write
+profile
+roles
+scim.me
+uaa.offline_token
+uaa.user
+user_attributes
+```
+
+To start to learn what authorizations/priveleges each group provides:
+
+```
+uaa list-groups | jq -r ".resources[] | {displayName, description}"
+```
+
+An interesting selection of the output is:
+
+```json
+{
+  "displayName": "openid",
+  "description": "Access profile information, i.e. email, first and last name, and phone number"
+}
+{
+  "displayName": "password.write",
+  "description": "Change your password"
+}
+{
+  "displayName": "uaa.user",
+  "description": "Act as a user in the UAA"
+}
+{
+  "displayName": "scim.userids",
+  "description": "Read user IDs and retrieve users by ID"
+}
+{
+  "displayName": "scim.invite",
+  "description": "Send invitations to users"
+}
+{
+  "displayName": "uaa.none",
+  "description": "Forbid acting as a user"
+}
+```
+
+Comparing the two lists, we see that our `drnic` user will be granted permission to:
+
+* `openid` - Access profile information, i.e. email, first and last name, and phone number
+* `password.write` - Change your own password
+* `uaa.user` - Act as a user in the UAA
+
+From the sample list of available authorization groups, we can note that `drnic` user is not in the following groups:
+
+* `scim.userids` - cannot read the user IDs nor retrieve users by ID
+* `scim.invite` - is not allowed to send invites to other users
+* `uaa.node` - is not forbidden from acting as a user
+
+In the subsequent sections we will allow our new users to "login" and authorize the `uaa` CLI to interact with the UAA on their behalf.
+
+## Authenticating on behalf of a user - via local password
+
+For the `uaa` CLI application to act on behalf of a user - with the permission of the user - then user will need to authenticate themselves. That is, to prove that they are who they claim to be. The simplest method is for a user to provide the secret password for their UAA user account.
+
+In this section, the user will give their username (who they claim to be) and their password (their proof that it is them) to the `uaa` client application, rather than to the UAA.
+
+The `uaa` CLI will forward the username/password to the UAA API to get authorization to act on behalf of the user.
+
+For a UAA client to be allowed to authorize users with the UAA it needs a UAA client to exist with an `authorized_grant_types` list that includes `password`.
+
+We can use the `uaa` - authenticated as the `uaa_client` client - to create a new UAA client:
+
+```
+uaa-deployment auth-client
 uaa create-client our_uaa_cli -s our_uaa_cli_secret \
   --authorized_grant_types password,refresh_token \
-  --scope "openid,bosh.admin,bosh.read,bosh.*.admin,bosh.*.read"  \
+  --scope "openid"  \
   --authorities uaa.none \
   --access_token_validity 120 \
   --refresh_token_validity 86400
@@ -231,8 +364,11 @@ The JSON output will be like:
 }
 ```
 
-
 ## Authenticating on behalf of a user - via web UI
+
+The risk of a user providing their username/password to a UAA third-party client application is that the client application stores the raw username/password and reuses them later without the user's permission.
+
+This risk can be avoided by the third-party client delgate the login process to the UAA user interface.
 
 First, register a new UAA client that is designed to allow the `uaa` to be used by normal UAA users.
 
