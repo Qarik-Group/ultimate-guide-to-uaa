@@ -241,7 +241,6 @@ The JSON output might be similar to:
       "display": "roles",
       "type": "DIRECT"
     },
-...
 ```
 
 Visit the UAA web UI, logout from `admin` user, and login as `drnic`:
@@ -251,6 +250,8 @@ Visit the UAA web UI, logout from `admin` user, and login as `drnic`:
 In the top right corner, select "Account Settings" and note that the new user has not yet granted any third-party client applications permission to access their UAA account:
 
 ![uaa-web-user-profile](images/uaa-web-user-profile.png)
+
+As mentioned before, when the `drnic` user logs into the UAA web site it is directly interacting with the UAA itself. The login process is `drnic`'s way of identifying who they believe they are (username: `drnic`) and proving that they are indeed `drnic` via their password (this is called authentication).
 
 ## Authenticating on behalf of a user - via local password
 
@@ -286,7 +287,7 @@ To demonstrate that the `uaa` is now operating on behalf of the `drnic` user:
 uaa userinfo
 ```
 
-The JSON output will be like:
+The JSON output might look like:
 
 ```json
 {
@@ -306,9 +307,9 @@ That is, the `uaa` CLI has authenticated as `drnic` user, and is authorized to l
 
 ## Authenticating on behalf of a user - via web UI
 
-The risk of a user providing their username/password to a UAA third-party client application is that the client application stores the raw username/password and reuses them later without the user's permission.
+The risk of a user providing their username/password to a UAA third-party client application is that a sneaky client application might store the raw username/password and reuse them later without the user's permission.
 
-This risk can be avoided by the third-party client delgate the login process to the UAA user interface.
+This risk can be avoided by never giving the user's credentials to third-party applications, rather only giving them directly to the UAA web UI. That is, the third-party client application delgates the login process to the UAA user interface, and in return receives a authorization token that the application can use to make subsequent API requests on behalf of the user.
 
 First, register a new UAA client that is designed to allow the `uaa` to be used by normal UAA users.
 
@@ -320,11 +321,25 @@ uaa create-client uaa-cli-authcode -s uaa-cli-authcode \
   --scope openid
 ```
 
-Now, to allow a user to authenticate:
+Typically each third-party application in the world will have its own registered UAA client. They become synomynous. If we talk about the application, we implicitly can refer to its UAA client, and vice versa.
+
+Some examples:
+
+* The Cloud Foundry CLI `cf` primarily interacts with a target UAA via a client `cf` ([UAA configuration](https://github.com/cloudfoundry/cf-deployment/blob/master/cf-deployment.yml#L415-L423))
+* The BOSH CLI `bosh` interacts with a target UAA via a client `bosh_cli` ([UAA configuration](https://github.com/cloudfoundry/bosh-deployment/blob/master/uaa.yml#L51-L59), [`bosh` cli configuration](https://github.com/cloudfoundry/bosh-cli/blob/master/cmd/session.go#L75-L76))
+
+A third-party application might use multiple UAA clients - each with different scopes of authority. For example, the `cf` CLI can use `cloud_controller_username_lookup` to convert UAA user IDs back into readable names
+https://github.com/cloudfoundry/cf-deployment/blob/master/cf-deployment.yml#L423-L427.
+
+The `uaa` third-party UAA client application is special - it can take on the behavior/authorities of any UAA client. Hence, each of its authentication/authorization commands require use to pass the client/secret.
+
+Next, the user can authorize the `uaa` without providing it their username/password:
 
 ```
 uaa get-authcode-token uaa-cli-authcode -s uaa-cli-authcode --port 9876
 ```
+
+The output will look similar to:
 
 ```
 Launching browser window to https://drnic-uaa.starkandwayne.com:8443/oauth/authorize?client_id=uaa-cli-authcode&redirect_uri=http%3A%2F%2Flocalhost%3A9876&response_type=code where the user should login and grant approvals
@@ -332,13 +347,19 @@ Starting local HTTP server on port 9876
 Waiting for authorization redirect from UAA...
 ```
 
+The user's web browser will be redirected to the UAA UI. If they have not already authenticated (logged in) then they will be prompted to do that.
+
+Next, they will be asked to grant authorization to the `uaa` CLI (via its `uaa-cli-authcode` UAA client):
+
 ![uaa-app-auth-ack](images/uaa-app-auth-ack.png)
+
+The UAA UI explains to the user the scope of permissions that the `uaa` CLI is requesting. When we ran `uaa create-client uaa-cli-authcode` to create the UAA client, we only requested `--scope openid`. That is, the `uaa` CLI only wants the abilities of the `openid` scope. The UAA UI now confirms that this means in plain english: "Access profile information, i.e. email, first and last name, and phone number".
 
 After clicking "Authorize" the browser changes to:
 
 ![uaa-app-auth-success](images/uaa-app-auth-success.png)
 
-More importantly, our `uaa get-authcode-token` command has automatically now completed:
+Back in the terminal, the `uaa get-authcode-token` command has now completed:
 
 ```
 Local server received request to GET /?code=xfnUz8RUON
@@ -438,7 +459,7 @@ An interesting selection of the output is:
 }
 ```
 
-Comparing the two lists, we see that our `drnic` user will be granted permission to:
+Comparing the two lists, we see that the `drnic` user will be granted permission to:
 
 * `openid` - Access profile information, i.e. email, first and last name, and phone number
 * `password.write` - Change your own password
