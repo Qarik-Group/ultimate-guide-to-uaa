@@ -265,6 +265,11 @@ _uaac() {
     faketty uaac token client get uaa_admin --secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
 }
 
+_uaa_cli() {
+    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation
+    faketty uaa get-client-credentials-token uaa_admin --client_secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
+}
+
 store_int() {
     bosh int $vars_store $@
 }
@@ -384,7 +389,7 @@ case "$1" in
         ;;
 
     auth)
-        _uaac "$@"
+        _uaa_cli "$@"
         ;;
 
     ssh)
