@@ -359,18 +359,25 @@ uaa get-authcode-token uaa-cli-authcode -s uaa-cli-authcode --port 9876
 
 The `uaa` CLI is now acting on behalf of a user.
 
-
-To add more scopes to a client, first get the current scopes:
-
-```
-uaa get-client admin
-uaa get-client admin | jq -r ".scope | join(\",\")"
-```
-
-And update a new `scope` as a comma-separated list:
+The `openid` scope allows the UAA API calls for:
 
 ```
-uaa update-client admin --scope uaa.none,openid
+uaa userinfo
+```
+
+But `drnic` cannot use `uaa` CLI to perform other API requests that have not been permitted to `drnic`, that `uaa` has requested from `drnic`, or that `drnic` has not permitted to `uaa` application:
+
+```
+$ uaa list-clients --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin clients.read clients.admin zones.uaa.admin"}
+
+$ uaa list-users --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.read zones.uaa.admin"}
+$ uaa get-user drnic --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.read zones.uaa.admin"}
+
+$ uaa create-user foo --email foo@bar.com --givenName Foo --familyName Bar --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.write scim.create zones.uaa.admin"}
 ```
 
 ## User permissions
