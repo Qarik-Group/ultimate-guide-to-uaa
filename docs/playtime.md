@@ -244,6 +244,14 @@ The JSON output might be similar to:
 ...
 ```
 
+Visit the UAA web UI, logout from `admin` user, and login as `drnic`:
+
+![uaa-web-normal-user-login](images/uaa-web-normal-user-login.png)
+
+In the top right corner, select "Account Settings" and note that the new user has not yet granted any third-party client applications permission to access their UAA account:
+
+![uaa-web-user-profile](images/uaa-web-user-profile.png)
+
 ## Authenticating on behalf of a user - via local password
 
 For the `uaa` CLI application to act on behalf of a user - with the permission of the user - then user will need to authenticate themselves. That is, to prove that they are who they claim to be. The simplest method is for a user to provide the secret password for their UAA user account.
@@ -269,10 +277,10 @@ uaa create-client our_uaa_cli -s our_uaa_cli_secret \
 A user can now provide the `uaa` CLI permission to interact with the UAA on its behalf:
 
 ```
-uaa get-password-token uaa_cli -s uaa_cli_secret -u admin -p 2rbaswzllkuy51ymzahz
+uaa get-password-token uaa_cli -s uaa_cli_secret -u drnic -p drnic_secret
 ```
 
-To demonstrate that the `uaa` is now operating on behalf of the `admin` user:
+To demonstrate that the `uaa` is now operating on behalf of the `drnic` user:
 
 ```
 uaa userinfo
@@ -282,17 +290,19 @@ The JSON output will be like:
 
 ```json
 {
-  "user_id": "4a7e6e3d-e39c-43f9-9c98-6052eb63109a",
-  "sub": "4a7e6e3d-e39c-43f9-9c98-6052eb63109a",
-  "user_name": "admin",
-  "given_name": "",
-  "family_name": "",
-  "email": "admin",
+  "user_id": "87fde4a5-17f3-4667-a5e2-fff62220c73e",
+  "sub": "87fde4a5-17f3-4667-a5e2-fff62220c73e",
+  "user_name": "drnic",
+  "given_name": "Dr Nic",
+  "family_name": "Williams",
+  "email": "drnic@starkandwayne",
   "phone_number": null,
-  "previous_logon_time": 1529658329563,
-  "name": " "
+  "previous_logon_time": 1529661057132,
+  "name": "Dr Nic Williams"
 }
 ```
+
+That is, the `uaa` CLI has authenticated as `drnic` user, and is authorized to look up that user's personal information. User Authentication & Authorization. UAA. Boomshakalaka.
 
 ## Authenticating on behalf of a user - via web UI
 
@@ -303,6 +313,7 @@ This risk can be avoided by the third-party client delgate the login process to 
 First, register a new UAA client that is designed to allow the `uaa` to be used by normal UAA users.
 
 ```
+uaa-deployment auth-client
 uaa create-client uaa-cli-authcode -s uaa-cli-authcode \
   --authorized_grant_types authorization_code,refresh_token \
   --redirect_uri http://localhost:9876 \
@@ -335,6 +346,10 @@ Calling UAA /oauth/token to exchange code xfnUz8RUON for an access token
 Stopping local HTTP server on port 9876
 Access token added to active context.
 ```
+
+If we visit the "Account Settings" in the UAA web UI we can see that `drnic` has a record of the new third-party application that has been previously authorized. It also documents that the application only has permission to use UAA API operations that only require the `openid` scope.
+
+![uaa-web-user-profile-authorized-client](images/uaa-web-user-profile-authorized-client.png)
 
 Running `uaa get-authcode-token` again will automatically authenticate the user via the browser:
 
