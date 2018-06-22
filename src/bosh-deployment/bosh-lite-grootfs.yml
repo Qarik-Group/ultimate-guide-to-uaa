@@ -1,0 +1,41 @@
+- type: replace
+  path: /releases/-
+  value:
+    name: grootfs
+    version: "0.24.0"
+    url: https://s3.amazonaws.com/bosh-compiled-release-tarballs/grootfs-0.24.0-ubuntu-trusty-3586.16-20180601-220137-174436338-20180601220142.tgz?versionId=jErU9km447WdxeRyxQ1cJ89BtglGqguE
+    sha1: 50a486dfffe25486bcbaddb344161ec2f884d7cd
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=garden/properties?/garden/image_plugin?
+  value: /var/vcap/packages/grootfs/bin/grootfs
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=garden/properties/garden/image_plugin_extra_args?
+  value:
+    - --config
+    - /var/vcap/jobs/grootfs/config/grootfs_config.yml
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=garden/properties/garden/privileged_image_plugin?
+  value: /var/vcap/packages/grootfs/bin/grootfs
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=garden/properties/garden/privileged_image_plugin_extra_args?
+  value:
+    - --config
+    - /var/vcap/jobs/grootfs/config/privileged_grootfs_config.yml
+
+- type: replace
+  path: /instance_groups/name=bosh/jobs/-
+  value:
+    name: grootfs
+    release: grootfs
+    properties:
+      grootfs:
+        driver: btrfs
+        log_level: debug
+
+- type: replace
+  path: /instance_groups/name=bosh/properties/warden_cpi/actions?/expand_stemcell_tarball
+  value: false
