@@ -1,0 +1,405 @@
+#!/bin/bash
+repo_root=$(dirname $(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd))
+
+if [[ "${BBL_STATE_DIR:-X}" != "X" ]]; then
+    BUCC_PROJECT_ROOT="${BBL_STATE_DIR}"
+    BUCC_STATE_ROOT="${BBL_STATE_DIR}/vars"
+    BUCC_VARS_FILE="${BUCC_STATE_ROOT}/director-vars-file.yml"
+    BUCC_STATE_STORE="${BUCC_STATE_ROOT}/bosh-state.json"
+    BUCC_VARS_STORE="${BUCC_STATE_ROOT}/director-vars-store.yml"
+fi
+
+project_root=${BUCC_PROJECT_ROOT:-${repo_root}}
+state=${BUCC_STATE_ROOT:-${project_root}/state}
+vars_file=${BUCC_VARS_FILE:-${project_root}/vars.yml}
+state_json_path=${BUCC_STATE_STORE:-${state}/state.json}
+vars_store=${BUCC_VARS_STORE:-${state}/creds.yml}
+
+manifest="${repo_root}/src/bosh-deployment/bosh.yml"
+state_arg="--state ${state_json_path}"
+vars_store_arg="--vars-store ${vars_store}"
+
+mkdir -p ${state}
+tmp=$(mktemp -d)
+trap "rm -fr ${tmp}" EXIT
+var_cache="${tmp}/vars_cache.yml"
+int_cache="${tmp}/int_cache.yml"
+
+PATH=${repo_root}/bin:${PATH}
+
+version=$(grep bucc ${repo_root}/.versions | cut -d= -f2)
+
+pushd () {
+    command pushd "$@" > /dev/null
+}
+
+popd () {
+    command popd "$@" > /dev/null
+}
+
+cpi() {
+    local cpi_file=${state}/cpi
+    local lite_file=${state}/lite
+    if [[ ! -f $cpi_file ]]; then
+        echo "virtualbox" > ${cpi_file}
+        echo "true" > ${lite_file}
+    fi
+    cat ${cpi_file}
+}
+
+cpis() {
+    find ${repo_root}/ops/cpis -mindepth 1 -maxdepth 1 ! -type l -exec basename -a {} +;
+}
+
+validate_vars_file() {
+    # Todo: prettify
+    local cpi_vars=${repo_root}/ops/cpis/$(cpi)/vars.tmpl
+    if [ ! -e $vars_file ]; then
+        cp $cpi_vars $vars_file
+        if [ ! $(cpi) = "virtualbox" ]; then
+            echo "We just copied a template in $vars_file please adjust it to your needs"
+            # we should break here or check file contents and see if we still have the right var file for the cpi
+            exit 1
+        fi
+    fi
+}
+
+vars_file() {
+    local state_vars=${state}/vars.yml
+    bosh int $vars_file > $state_vars
+    echo $state_vars
+}
+
+validate_cpi() {
+    local cpis_dir=${repo_root}/ops/cpis
+    if [ ! -d ${cpis_dir}/$(cpi) ]; then
+        echo "'--cpi $(cpi)' not supported, please one of the following:"
+        echo $(cpis | xargs)
+        exit 1
+    fi
+}
+
+validate_cpi_flags() {
+    if [ -f ${state}/flags ]; then
+        for option in $(cat ${state}/flags); do
+            local flags_dirs="${repo_root}/ops/flags"
+            if [ -d "${repo_root}/ops/cpis/$(cpi)/flags" ]; then
+                flags_dirs+=" ${repo_root}/ops/cpis/$(cpi)/flags"
+            fi
+            local supported_flags=$(ls ${flags_dirs} | grep yml | cut -d "." -f 1 | sed 's/^/--/' | xargs)
+            if [[ ! ${supported_flags} == *"${option}"* ]]; then
+                echo "unsupported flag: --${option}"
+                echo "flags for '--cpi $(cpi)' are: ${supported_flags}"
+                exit 1
+            fi
+        done
+    fi
+}
+
+normalize_flags() (
+    if [ -f ${state}/flags ]; then
+        cat ${state}/flags | sort | uniq > ${state}/flags.tmp && mv ${state}/flags{.tmp,}
+    fi
+)
+
+int_args() (
+    local ops_files=()
+
+    vars_file_arg="--vars-file $(vars_file)"
+
+    ops_files+=(${repo_root}/ops/*.yml)
+    ops_files+=(${repo_root}/ops/cpis/$(cpi)/*.yml)
+
+    if [ -f ${state}/flags ]; then
+        for flag in $(cat ${state}/flags); do
+            if [ -e "${repo_root}/ops/flags/${flag}.yml" ]; then
+                ops_files+=(${repo_root}/ops/flags/${flag}.yml)
+            else
+                ops_files+=(${repo_root}/ops/cpis/$(cpi)/flags/${flag}.yml)
+            fi
+        done
+    fi
+
+    if [[ -d ${project_root}/operators ]]; then
+        ops_files+=(${project_root}/operators/*.yml)
+    fi
+
+    ops_file_args=$(printf '%s\n' "${ops_files[@]}" | sed 's|\(.*\)/|\1@|' | sort -t@ -k2 | sed 's|@|/|' | sed 's/^/-o /' | xargs)
+    echo "${manifest} ${ops_file_args} ${vars_store_arg} ${vars_file_arg}"
+)
+
+ca_cert() {
+    local tmp=$(mktemp -d) # temp fix for https://github.com/cloudfoundry/cf-uaac/issues/60
+    local ca_cert_file="${tmp}/ca.pem"
+    store_int --path /default_ca/ca > $ca_cert_file
+    store_int --path /credhub_ca/ca >> $ca_cert_file
+    echo $ca_cert_file
+}
+
+usage() {
+    echo "UAA Deployment CLI v${version:-(development)}"
+    echo "  up -- creates the UAA VM with bosh create-env"
+    echo "  down -- deletes VM with bosh delete-env - can be used with --clean"
+    echo "  ssh -- ssh into the UAA VM"
+    echo "  env -- sourceable envrionment variables for cli clients"
+    echo "  int -- wrapper for 'bosh int' for the bosh manifest"
+    echo "  auth -- configures uaa cli"
+    echo "  routes -- add routes for virtualbox"
+    exit 1
+}
+
+up_usage() {
+    echo "  --cpi    Cloud provider: [$(cpis | xargs | sed 's/ /, /g')]"
+    echo "  --lite   Created bosh will use the warden cpi with garden runc"
+    echo "  --debug  Show arguments passed to 'bosh create-env'"
+    echo "$(ls ${repo_root}/ops/flags | cut -d "." -f 1 | sed 's/^/  --/')"
+    echo ""
+    echo "  Optional cpi specific flags:"
+
+    local cpis_dir=${repo_root}/ops/cpis
+    for cpi in $(cpis); do
+        local flags_dir=${repo_root}/ops/cpis/${cpi}/flags
+        if [ -d ${flags_dir} ]; then
+            echo "    ${cpi}: $(ls ${flags_dir} | cut -d "." -f 1 | sed 's/^/--/' | xargs)"
+        fi
+    done
+
+}
+
+down_usage() {
+    echo "  -c | --clean  cleans up your enviroment by removing state files"
+}
+
+platform() {
+    if [ "$(uname)" == "Darwin" ]; then
+        echo "darwin"
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        echo "linux"
+    fi
+}
+
+faketty() {
+    case $(platform) in
+        darwin)
+            script -q /dev/null "$@"
+            ;;
+        linux)
+            script -qfc "$(printf "%q " "$@")" /dev/null
+            ;;
+    esac
+}
+
+up() {
+    local flags="--cpi $(cpi)"
+    if [ -f ${state}/flags ]; then
+        flags+=" $(cat ${state}/flags | sed 's/^/--/' | xargs)"
+    fi
+    echo "Using flags: ${flags}"
+    echo -e "Flag files: '${state}/{cpi,lite,flags}'\n"
+
+    if [[ ${DEBUG} == true ]]; then
+        echo -e "bosh create-env $(int_args | sed 's/yml/yml \\ \\n/g') ${state_arg}\n"
+    fi
+
+    bosh create-env $(int_args) ${state_arg} "$@"
+}
+
+down() {
+    if [ ! -e $vars_file ]; then
+      echo "please create a enviroment first with 'bucc up'"
+      exit 1
+    fi
+
+    bosh delete-env $(int_args) ${state_arg} "$@"
+    echo "you can use the clean command if your are planning to use a new cpi or ip"
+}
+
+vars() {
+    cat $(vars_file)
+}
+
+get_var() {
+    path=$1
+    if [[ ! -s ${var_cache} ]]; then
+        vars > ${var_cache}
+    fi
+    bosh int ${var_cache} --path "/$path"
+}
+
+get_var_with_default() {
+    path=$1
+    default_value=$2
+    if [[ ! -f ${var_cache} ]]; then
+        vars > ${var_cache}
+    fi
+    if [[ -n $(cat ${var_cache} | grep "$path:") ]]; then
+        bosh int ${var_cache} --path "/$path"
+    else
+        echo "${default_value}"
+    fi
+}
+
+_alias() {
+    get_var_with_default "alias" "bucc"
+}
+
+env() {
+    echo "export PATH=\"${PATH}\""
+    if [[ ! -f ${vars_store} ]]; then
+        exit 0
+    fi
+}
+
+routes() {
+    case $(platform) in
+        darwin)
+            sudo route add -net 10.244.0.0/16    192.168.50.6
+            ;;
+        linux)
+            sudo route add -net 10.244.0.0/16 gw 192.168.50.6
+            ;;
+    esac
+}
+
+_uaac() {
+    faketty uaac target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --ca-cert $(ca_cert)
+    faketty uaac token client get uaa_admin --secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
+}
+
+store_int() {
+    bosh int $vars_store $@
+}
+
+int() {
+    if [[ ! -s ${int_cache} ]]; then
+        bosh int $(int_args) > ${int_cache}
+    fi
+    bosh int ${int_cache} $@
+}
+
+ip() {
+    int --path /networks/name=default/subnets/0/static/0
+}
+
+ssh_private_key() {
+    local tmp=$(mktemp -d) # can be removed after fix https://github.com/cloudfoundry/bosh-cli/issues/418
+    local ssh_private_key="${tmp}/ssh.key"
+    store_int --path /jumpbox_ssh/private_key > $ssh_private_key
+    chmod 600 $ssh_private_key
+    echo $ssh_private_key
+}
+
+jump() {
+    echo $BOSH_ALL_PROXY | sed -e 's$ssh+socks5://\(.*\):.*=\(.*\)$-o "ProxyCommand=ssh \1 -i \2 nc %h %p"$g'
+}
+
+_ssh() {
+    tmp_config=$(mktemp)
+    if [[ "$BOSH_ALL_PROXY" == "ssh+socks5"* ]]; then
+        echo $BOSH_ALL_PROXY | sed -e 's$ssh+socks5://\(.*\):\(.*\)?.*=\(.*\)$ProxyCommand ssh -W %h:%p \1 -p \2 -i \3$g' > ${tmp_config}
+    fi
+    local user=$(int --path /instance_groups/name=bosh/jobs/name=user_add/properties/users/0/name)
+    cmd="ssh -i $(ssh_private_key) -F ${tmp_config} $user@$(ip)"
+    set -x
+    if [ $# -eq 0 ]; then
+        ${cmd} -t 'command; sudo su -'
+    else
+        ${cmd} $@
+    fi
+    rm ${tmp_config}
+}
+
+header() {
+    printf "\n\033[0;34m${1}\033[0m\n\n"
+}
+
+case "$1" in
+    up)
+        shift
+        bosh_args=""
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                -h|--help|help)
+                    up_usage
+                    exit 0
+                    ;;
+                --cpi)
+                    echo "$2" > ${state}/cpi
+                    shift
+                    ;;
+                --cpi=*)
+                    echo "${1#*=}" > ${state}/cpi
+                    ;;
+                --debug)
+                    DEBUG=true
+                    ;;
+                --var=*|--var-file=*)
+                    bosh_args="${bosh_args} ${1}"
+                    ;;
+                *)
+                    echo ${1#*--} >> ${state}/flags
+            esac
+            shift
+        done
+        normalize_flags
+        validate_cpi
+        validate_vars_file
+        validate_cpi_flags
+
+        up ${bosh_args}
+        ;;
+
+    down)
+        shift
+        bosh_args=""
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                -h|--help|help)
+                    down_usage
+                    exit 0
+                    ;;
+                -c|--clean|clean)
+                    down
+                    clean
+                    exit 0
+                    ;;
+                --var=*|--var-file=*)
+                    bosh_args="${bosh_args} ${1}"
+                    ;;
+            esac
+            shift
+        done
+        down ${bosh_args}
+        ;;
+
+    env)
+        env "$@"
+        ;;
+
+    vars)
+        vars "$@"
+        ;;
+
+    uaac)
+        _uaac "$@"
+        ;;
+
+    ssh)
+        shift
+        _ssh "$@"
+        ;;
+
+    int)
+        shift
+        int "$@"
+        ;;
+
+    routes)
+        routes
+        ;;
+
+    *)
+        usage
+        exit 1
+        ;;
+esac
