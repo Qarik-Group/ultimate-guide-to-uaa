@@ -144,6 +144,7 @@ usage() {
     echo "  int -- wrapper for 'bosh int' for the bosh manifest"
     echo "  info -- UAA information"
     echo "  auth-client -- configures uaa cli as a client only"
+    echo "  auth-user -- authenticate uaa cli as an admin user"
     echo "  routes -- add routes for virtualbox"
     exit 1
 }
@@ -280,6 +281,11 @@ _uaa_auth_client() {
     faketty uaa get-client-credentials-token uaa_admin --client_secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
 }
 
+_uaa_auth_user() {
+    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation
+    faketty uaa get-password-token uaa_cli -s "$(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_cli/secret)" -u $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/name) -p $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/password)
+}
+
 store_int() {
     bosh int $vars_store $@
 }
@@ -404,6 +410,10 @@ case "$1" in
 
     auth-client)
         _uaa_auth_client "$@"
+        ;;
+
+    auth-user)
+        _uaa_auth_user "$@"
         ;;
 
     ssh)
