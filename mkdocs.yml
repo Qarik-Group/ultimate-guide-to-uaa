@@ -1,4 +1,4 @@
-site_name: UAA Tutorial by Stark & Wayne
+site_name: Ultimate Guide to UAA by Stark & Wayne
 pages:
   - Introduction: index.md
   - Install uaa CLI: install-cli.md
