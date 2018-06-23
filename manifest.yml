@@ -5,5 +5,5 @@ applications:
   instances: 1
   memory: 64M
   routes:
-  - route: uaa-tutorial-staging.starkandwayne.com
+  - route: ultimate-guide-to-uaa-staging.cfapps.io
   stack: cflinuxfs2

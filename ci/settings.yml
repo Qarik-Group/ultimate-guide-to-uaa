@@ -1,0 +1,19 @@
+meta:
+  name:    ultimate-guide-to-uaa
+  # fly -t ohio-cf login -c https://ci2.starkandwayne.com -n cfcommunity
+  target:  ohio-cf
+  url:     https://ci2.starkandwayne.com
+
+  cf:
+    uri: https://api.run.pivotal.io
+    organization: starkandwayne
+    space-production: ultimate-guide-to-bosh
+    username: ((!cf-pws-username))
+    password: ((!cf-pws-password))
+
+  github:
+    owner: starkandwayne
+    repo: uaa-deployment
+    branch: master
+    private_key:  ((!github-private-key))
+    access_token: ((!github-access-token))
