@@ -1,3 +1,8 @@
+- type: replace
+  path: /instance_groups/name=bosh/jobs/name=postgres/properties/databases/databases
+  value:
+    - name: uaa
+
 - type: remove
   path: /instance_groups/name=bosh/jobs/name=bpm
 
