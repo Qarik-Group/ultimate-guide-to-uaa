@@ -1,19 +1,23 @@
 #!/bin/bash
 repo_root=$(dirname $(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd))
 
-if [[ "${BBL_STATE_DIR:-X}" != "X" ]]; then
-    BUCC_PROJECT_ROOT="${BBL_STATE_DIR}"
-    BUCC_STATE_ROOT="${BBL_STATE_DIR}/vars"
-    BUCC_VARS_FILE="${BUCC_STATE_ROOT}/director-vars-file.yml"
-    BUCC_STATE_STORE="${BUCC_STATE_ROOT}/bosh-state.json"
-    BUCC_VARS_STORE="${BUCC_STATE_ROOT}/director-vars-store.yml"
+if [ -e "bbl-state.json" ]; then
+    BBL_STATE_DIR="$(pwd)"
 fi
 
-project_root=${BUCC_PROJECT_ROOT:-${repo_root}}
-state=${BUCC_STATE_ROOT:-${project_root}/state}
-vars_file=${BUCC_VARS_FILE:-${project_root}/vars.yml}
-state_json_path=${BUCC_STATE_STORE:-${state}/state.json}
-vars_store=${BUCC_VARS_STORE:-${state}/creds.yml}
+if [[ "${BBL_STATE_DIR:-X}" != "X" ]]; then
+    UAADEPLOY_PROJECT_ROOT="${BBL_STATE_DIR}"
+    UAADEPLOY_STATE_ROOT="${BBL_STATE_DIR}/vars"
+    UAADEPLOY_VARS_FILE="${UAADEPLOY_STATE_ROOT}/director-vars-file.yml"
+    UAADEPLOY_STATE_STORE="${UAADEPLOY_STATE_ROOT}/bosh-state.json"
+    UAADEPLOY_VARS_STORE="${UAADEPLOY_STATE_ROOT}/director-vars-store.yml"
+fi
+
+project_root=${UAADEPLOY_PROJECT_ROOT:-${repo_root}}
+state=${UAADEPLOY_STATE_ROOT:-${project_root}/state}
+vars_file=${UAADEPLOY_VARS_FILE:-${project_root}/vars.yml}
+state_json_path=${UAADEPLOY_STATE_STORE:-${state}/state.json}
+vars_store=${UAADEPLOY_VARS_STORE:-${state}/creds.yml}
 
 manifest="${repo_root}/src/bosh-deployment/bosh.yml"
 state_arg="--state ${state_json_path}"
