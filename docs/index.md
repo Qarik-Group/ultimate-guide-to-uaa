@@ -1,5 +1,30 @@
 ## What is the UAA?
 
+
+## Why *not* use the UAA?
+
+Whilst the UAA is a solution to several critical problems it is not the only solution. If your web applications or mobile applications have user accounts and login pages then you have already solved some of the user authentication and authorization problems already.
+
+If you've delegated some then you might have delegated them to GitHub, Google Accounts, Microsoft Active Directory, Facebook, Twitter, or some other pre-existing system that will tell your site that a user is a specific user.
+
+As an example, I want to use your application and you allow me to authenticate to your application via GitHub. That is, you ask GitHub to prove who I am and allow GitHub to tell you my personal information.
+
+On your site I click your "Login via GitHub" button.
+
+I would be redirected to https://github.com/ to first login if I were not already signed in. As Dr Nic Williams, I would login to GitHub as [@drnic](https://github.com/drnic). Since only I know my GitHub password, GitHub trusts that the `@drnic` account is me. Except GitHub doesn't truly trust me, so it asks me for a second form of proof. I take out my phone, open the Authy application (or another like Google Authenitcator) and copy in a 6 digit number. Finally GitHub believes that `@drnic` is me using two factors of authentication (2FA) - my password and my code from my phone.
+
+Next, GitHub asks me if I grant your application permission - authorization - to access my GitHub account. Your application only wants my personal profile information - my name and email - and so that is all I am asked to authorize. I click "Authorize".
+
+GitHub now redirects me back to your web application or mobile application. Your application is given my personal information - my email and name - and your application respects GitHub's decision and the information it receives from GitHub. If GitHub believes that I am `@drnic` and my name is "Dr Nic Williams", then your application believes it too. Your application never has to ask me for my name nor email.
+
+Your example application also supports organizations - as a user I can see and edit content only within teams/organizations that I belong.
+
+Instead of you development team spending a lot of time implementing its own UI and business logic for orgnaizations - how to invite and revoke people from teams - you defer again to GitHub. When GitHub redirected me back to your application, it also told you which GitHub organizations I am a member of, and which teams of each organization. For example, I am a member of the [@starkandwayne](https://github.com/starkandwayne) - an excellent consultancy for Cloud Foundry, Kubernetes, and enterprise cloud systems. Your application also has a `@starkandwayne` organization so I am automatically granted permission (authorization) to read and modify its contents within your application.
+
+If not Github, your application might use Google Accounts (`drnic@starkandwayne.com` belongs to a `@starkandwayne.com` Google Account) or an in-house Microsoft Active Directory organization.
+
+In all these variations your application does not have to touch or store or rotate passwords or two-factor authentication systems. It does not have to implement UIs for the management of membership of organizations/teams. And anything you didn't have to implement is something you don't have to continually maintain over the next decade. You've kept your application simpler, and thus its behavior more well known to more people.
+
 ## Why do I write this book?
 
 The UAA was first written to be a component of Cloud Foundry for its 2011 public open source release. I've watched or been heavily involved with Cloud Foundry since that time, over 7 years ago from 2018 at the time of writing, and yet I never truly understood the UAA. It just worked. I thought, what was to truly know?
