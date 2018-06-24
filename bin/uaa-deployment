@@ -27,7 +27,7 @@ int_cache="${tmp}/int_cache.yml"
 
 PATH=${repo_root}/bin:${PATH}
 
-version=$(grep bucc ${repo_root}/.versions | cut -d= -f2)
+version=$(grep uaa-deployment ${repo_root}/.versions | cut -d= -f2)
 
 pushd () {
     command pushd "$@" > /dev/null
@@ -139,6 +139,7 @@ usage() {
     echo "UAA Deployment CLI v${version:-(development)}"
     echo "  up -- creates the UAA VM with bosh create-env"
     echo "  down -- deletes VM with bosh delete-env - can be used with --clean"
+    echo "  clean -- start with a clean enviorment - use this only after you've torn down your env"
     echo "  ssh -- ssh into the UAA VM"
     echo "  env -- sourceable envrionment variables for cli clients"
     echo "  int -- wrapper for 'bosh int' for the bosh manifest"
@@ -206,12 +207,22 @@ up() {
 
 down() {
     if [ ! -e $vars_file ]; then
-      echo "please create a enviroment first with 'bucc up'"
+      echo "please create a enviroment first with 'uaa-deployment up'"
       exit 1
     fi
 
     bosh delete-env $(int_args) ${state_arg} "$@"
     echo "you can use the clean command if your are planning to use a new cpi or ip"
+}
+
+clean() {
+  if curl -m 1 -k -s "https://$(bosh int <(uaa-deployment vars) --path /internal_ip):8443/login" | grep Version &>/dev/null ; then
+    echo "Your UAA enviroment is still running, please tear it down with 'uaa-deployment down --clean'"
+    exit 1
+  fi
+  rm -rf ${state}
+  mv ${vars_file} ${vars_file}.bck
+  echo "'state' dir has been cleaned and 'vars.yml' has been moved to 'vars.yml.bck'"
 }
 
 vars() {
@@ -240,7 +251,7 @@ get_var_with_default() {
 }
 
 _alias() {
-    get_var_with_default "alias" "bucc"
+    get_var_with_default "alias" "uaa-deployment"
 }
 
 env() {
@@ -390,6 +401,10 @@ case "$1" in
             shift
         done
         down ${bosh_args}
+        ;;
+
+    clean)
+        clean "$@"
         ;;
 
     env)
