@@ -37,3 +37,21 @@ Succesfully logging in with the `admin` username/password will look like:
 
 You'll see a corporate logo (the default is "Cloud Foundry"), the title "Where to?", and .... a void of emptiness. This homepage of the UAA can be filled with "tiles" - icons/names for your internal corporate applications that users can possible use. We will revisit this later.
 
+## Upgrading UAA
+
+Your UAA, including Java & Tomcat & PostgreSQL, is running on a single VM (via VirtualBox if you run `uaa-deployment up` without the `--cpi` flag). Over time new versions of the UAA or PostgreSQL will be available.
+
+To upgrade:
+
+```
+git pull
+uaa-deployment up
+```
+
+## Destroy UAA
+
+Later when you want to destroy your UAA VM and associated persistent disk:
+
+```
+uaa-deployment down
+```
