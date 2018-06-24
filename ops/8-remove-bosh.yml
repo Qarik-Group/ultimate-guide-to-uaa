@@ -56,6 +56,9 @@
   path: /variables/name=mbus_bootstrap_password
 
 - type: remove
+  path: /variables/name=nats_clients_health_monitor_tls
+
+- type: remove
   path: /variables/name=nats_ca
 
 - type: remove
