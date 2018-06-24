@@ -47,13 +47,7 @@
   path: /variables/name=blobstore_director_password
 
 - type: remove
-  path: /variables/name=blobstore_agent_password
-
-- type: remove
   path: /variables/name=hm_password
-
-- type: remove
-  path: /variables/name=mbus_bootstrap_password
 
 - type: remove
   path: /variables/name=nats_clients_health_monitor_tls
