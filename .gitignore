@@ -1,4 +1,7 @@
-state
+state/
 site
 tmp
 .DS_Store
+/bin/bosh
+/vars.yml
+/vars.yml.bck

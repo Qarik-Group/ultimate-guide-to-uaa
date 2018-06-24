@@ -282,6 +282,28 @@ info() {
     echo "  password: $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/password)"
 }
 
+_ensure_bosh_cli_installed() {
+    local url="https://s3.amazonaws.com/bosh-cli-artifacts/bosh-cli"
+    local version=$(grep bosh ${repo_root}/.versions | cut -d= -f2)
+    local cli_path=${repo_root}/bin/bosh
+
+    if ! ( [ -f ${cli_path} ] && ${cli_path} --version | head -n 1 | grep ${version} > /dev/null); then
+
+      (>&2 echo "installing bosh cli '${version}' into: ${repo_root}/bin/")
+      pushd $(mktemp -d)
+      if [ "$(platform)" == "darwin" ]; then
+          curl -s -L >bosh "${url}-${version}-darwin-amd64"
+          chmod +x bosh
+          mv bosh ${repo_root}/bin/
+      else
+          curl -s -L >bosh "${url}-${version}-linux-amd64"
+          chmod +x bosh
+          mv bosh ${repo_root}/bin/
+      fi
+      popd
+    fi
+}
+
 _uaac() {
     faketty uaac target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --ca-cert $(ca_cert)
     faketty uaac token client get uaa_admin --secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
@@ -344,6 +366,7 @@ header() {
     printf "\n\033[0;34m${1}\033[0m\n\n"
 }
 
+_ensure_bosh_cli_installed
 case "$1" in
     up)
         shift
