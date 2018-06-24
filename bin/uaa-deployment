@@ -324,14 +324,14 @@ _uaa_auth_user() {
 }
 
 store_int() {
-    bosh int $vars_store $@
+    bosh int $vars_store "$@"
 }
 
 int() {
     if [[ ! -s ${int_cache} ]]; then
         bosh int $(int_args) > ${int_cache}
     fi
-    bosh int ${int_cache} $@
+    bosh int ${int_cache} "$@"
 }
 
 ip() {
@@ -361,7 +361,7 @@ _ssh() {
     if [ $# -eq 0 ]; then
         ${cmd} -t 'command; sudo su -'
     else
-        ${cmd} $@
+        ${cmd} "$@"
     fi
     rm ${tmp_config}
 }
