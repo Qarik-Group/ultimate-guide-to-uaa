@@ -26,7 +26,7 @@ uaa-deployment info
 
 The output might look like:
 
-```
+```text
 UAA:
   url: https://192.168.50.6:8443
   client: uaa_admin
