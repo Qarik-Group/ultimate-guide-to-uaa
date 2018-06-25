@@ -2,14 +2,3 @@
 - type: replace
   path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/admin/scope
   value: openid
-
-- type: replace
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/uaa_cli?
-  value:
-    override: true
-    authorized-grant-types: password,refresh_token
-    scope: openid
-    authorities: uaa.none
-    access-token-validity: 120 # 2 min
-    refresh-token-validity: 86400 # 1 day
-    secret: uaa_cli_secret
