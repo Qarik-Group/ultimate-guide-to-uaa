@@ -14,10 +14,10 @@ Alternately, you can run the `uaa` commands directly:
 
 ```
 uaa target https://192.168.50.6:8443 --skip-ssl-validation
-uaa get-client-credentials-token uaa_admin -s nnb2tbev0j82gxdz65xc
+uaa get-client-credentials-token uaa_admin -s <uaa_admin_client_secret>
 ```
 
-This time we use the client/client_secret values. We are giving the `uaa` application permission to interact with the UAA API as a peer: one application talking to another application.
+This time we use the client/client_secret values. We are giving the `uaa` application permission to interact with the UAA API as a peer: one application talking to another application. It has access to all users' data, albeit potentially scoped by functionality (e.g. it mightt be able to list all user information but not be able to modify them). We will discuss scoping in future.
 
 You can now use the `uaa` CLI to interact with your UAA.
 
@@ -31,6 +31,12 @@ You can filter the attributes of each user:
 
 ```
 uaa list-users --attributes id,userName
+```
+
+To view a user called `admin`:
+
+```
+uaa list-users | jq -r ".resources[] | select(.userName == \"admin\")"
 ```
 
 To see the various scopes that the `admin` user is allowed to access:
@@ -74,10 +80,10 @@ To see a list of application clients in JSON:
 ```
 uaa list-clients
 
-uaa list-clients | jq -r ".[] | {client_id, authorized_grant_types, scope}"
+uaa list-clients | jq -r ".[] | {client_id, authorized_grant_types, scope, authorities}"
 ```
 
-We've introduced one client so far - `uaa_client` - which we're using currently to allow the `uaa` CLI application to talk to the UAA API. To view its configuraton:
+We've introduced one client so far - `uaa_admin` - which we're using currently to allow the `uaa` CLI application to talk to the UAA API. To view its configuraton:
 
 ```
 uaa get-client uaa_admin
@@ -110,7 +116,7 @@ The output might look like:
 }
 ```
 
-We have authenticated our `uaa` application so we should be able to ask "who am I?":
+We have authenticated our `uaa` CLI application  as client `uaa_admin` so we should be able to ask "who am I?":
 
 ```
 uaa userinfo
