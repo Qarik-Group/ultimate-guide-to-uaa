@@ -1,3 +1,5 @@
+# Deploy UAA
+
 The [Ultimate Guide to UAA](/) book includes an accompanying free tool to deploy a production-grade UAA to your local machine or any cloud infrastructure.
 
 Your UAA will have generated certificates, randomized passwords, and its PostgreSQL-backed data will be stored on a persistent disk volume on your target cloud infrastructure.
@@ -6,7 +8,7 @@ The [`uaa-deployment` CLI](https://github.com/starkandwayne/uaa-deployment) tool
 
 To download and prepare the `uaa-deployment` project using `git`:
 
-```
+```text
 git clone https://github.com/starkandwayne/uaa-deployment
 cd uaa-deployment
 source .envrc
@@ -14,13 +16,13 @@ source .envrc
 
 To deploy or upgrade a UAA server to your local machine via VirtualBox:
 
-```
+```text
 uaa-deployment up
 ```
 
 Once our UAA is running we can view the target URL and some admin-level authentication:
 
-```
+```text
 uaa-deployment info
 ```
 
@@ -57,7 +59,7 @@ Your UAA, including Java & Tomcat & PostgreSQL, is running on a single VM (via V
 
 To upgrade:
 
-```
+```text
 git pull
 uaa-deployment up
 ```
@@ -66,6 +68,6 @@ uaa-deployment up
 
 Later when you want to destroy your UAA VM and associated persistent disk:
 
-```
+```text
 uaa-deployment down
 ```
