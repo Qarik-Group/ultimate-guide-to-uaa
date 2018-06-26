@@ -3,12 +3,12 @@ pages:
   - Introduction: index.md
   - Install uaa CLI: install-cli.md
   - Deploy UAA: deploy-uaa.md
-  - Authenticating a third-party application: authenticate-third-party-app.md
+  - UAA and Client Apps: uaa-and-client-apps.md
   - Users: users.md
-  - Authenticating client with password: authenticating-client-via-password.md
-  - Authenticating client via Web UI: authenticating-client-via-authcode.md
-  - User permissions: user-permissions.md
-  - Client permissions: client-permissions.md
+  - Authenticating Client with Password: authenticating-client-via-password.md
+  - Authenticating Client via Web UI: authenticating-client-via-authcode.md
+  - User Permissions: user-permissions.md
+  - Client Permissions: client-permissions.md
 
 theme:
   name: 'material'

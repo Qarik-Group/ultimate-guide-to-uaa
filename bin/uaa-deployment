@@ -314,13 +314,13 @@ _uaac() {
 }
 
 _uaa_auth_client() {
-    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation
-    faketty uaa get-client-credentials-token uaa_admin --client_secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)
+    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation "$@"
+    faketty uaa get-client-credentials-token uaa_admin --client_secret $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret) "$@"
 }
 
 _uaa_auth_user() {
-    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation
-    faketty uaa get-password-token uaa_cli -s "$(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_cli/secret)" -u $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/name) -p $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/password)
+    faketty uaa target $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/url) --skip-ssl-validation "$@"
+    faketty uaa get-password-token uaa_cli -s "$(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_cli/secret)" -u $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/name) -p $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/password) "$@"
 }
 
 store_int() {
@@ -353,7 +353,7 @@ jump() {
 _ssh() {
     tmp_config=$(mktemp)
     if [[ "$BOSH_ALL_PROXY" == "ssh+socks5"* ]]; then
-        echo $BOSH_ALL_PROXY | sed -e 's$ssh+socks5://\(.*\):\(.*\)?.*=\(.*\)$ProxyCommand ssh -W %h:%p \1 -p \2 -i \3$g' > ${tmp_config}
+        echo "$BOSH_ALL_PROXY" | sed -e 's$ssh+socks5://\(.*\):\(.*\)?.*=\(.*\)$ProxyCommand ssh -W %h:%p \1 -p \2 -i \3$g' > ${tmp_config}
     fi
     local user=$(int --path /instance_groups/name=bosh/jobs/name=user_add/properties/users/0/name)
     cmd="ssh -i $(ssh_private_key) -F ${tmp_config} $user@$(ip)"
@@ -364,10 +364,6 @@ _ssh() {
         ${cmd} "$@"
     fi
     rm ${tmp_config}
-}
-
-header() {
-    printf "\n\033[0;34m${1}\033[0m\n\n"
 }
 
 _ensure_bosh_cli_installed
