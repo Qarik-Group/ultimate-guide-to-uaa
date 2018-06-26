@@ -2,6 +2,12 @@
 
 The [Ultimate Guide to UAA](/) book includes an accompanying free tool to deploy a production-grade UAA to your local machine or any cloud infrastructure.
 
+Alternately, you might be able to use a UAA that accompanyed a Cloud Foundry platform or BOSH environment.
+
+If you are Pivotal Cloud Foundry customer, there is also the Single-Sign On tile which provides a UAA on demand.
+
+This book will introduce you to the `uaa-deployment` tool that allows you to deploy the UAA locally.
+
 Your UAA will have generated certificates, randomized passwords, and its PostgreSQL-backed data will be stored on a persistent disk volume on your target cloud infrastructure.
 
 The [`uaa-deployment` CLI](https://github.com/starkandwayne/uaa-deployment) tool is built for Linux/OSX/Bash environments.

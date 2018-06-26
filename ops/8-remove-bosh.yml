@@ -1,3 +1,13 @@
+- type: remove
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/bosh_cli
+
+- type: remove
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/hm
+
+- type: remove
+  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/scim/users/name=admin/groups
+  value: []
+
 - type: replace
   path: /instance_groups/name=bosh/jobs/name=postgres/properties/databases/databases
   value:
@@ -41,12 +51,6 @@
 
 - type: remove
   path: /instance_groups/name=bosh/properties/ntp
-
-- type: remove
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/bosh_cli
-
-- type: remove
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/clients/hm
 
 - type: remove
   path: /variables/name=blobstore_director_password
