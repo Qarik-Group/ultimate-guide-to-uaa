@@ -4,8 +4,8 @@ When we [deployed our UAA](/deploy-uaa) we observed that an `admin` user was cre
 
 Fortunately it is very easy to create new users with the `uaa` CLI.
 
-> [!NOTE]
-> Later when we investigate linking your UAA with pre-existing user directories such as Microsoft Active Directory you will not need to create UAA users at all.
+!!! info "User Directories"
+    You do not need to explicitly create nor configure UAA users at all if you've linked your UAA with a pre-existing user directory such as Microsoft Active Directory. We will investigate this later.
 
 Continuing as the `uaa_admin` client, we can create new users and also look up the personal details of all users.
 
