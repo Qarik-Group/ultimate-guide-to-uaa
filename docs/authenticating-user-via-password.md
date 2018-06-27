@@ -49,3 +49,38 @@ The JSON output might look like:
 ```
 
 That is, the `uaa` CLI has authenticated as `drnic` user, and is authorized to look up that user's personal information. User Authentication & Authorization. UAA. Boomshakalaka.
+
+## Password Grant Type
+
+In previous sections we used the `uaa_admin` UAA client, but in this section we created a new UAA client. Why?
+
+Try repeating the `uaa get-password-token -u drnic -p drnic_secret` command but with the `uaa_admin` client.
+
+First, get the `uaa_admin` password and then use it with the `uaa get-password-token` command:
+
+```text
+uaa-deployment info
+uaa get-password-token uaa_admin -s <secret> -u drnic -p drnic_secret -v
+```
+
+The error will indicate that the `uaa_admin` client does not support the required `password` grant type:
+
+```json
+{"error":"invalid_client","error_description":"Unauthorized grant type: password"}
+```
+
+Compare the two clients:
+
+```text
+uaa-deployment auth-client
+uaa list-clients | jq -rc ".[] | {client_id, authorized_grant_types}"
+```
+
+The output will include our two clients `uaa_admin` and `our_uaa_cli`:
+
+```json
+{"client_id":"our_uaa_cli","authorized_grant_types":["refresh_token","password"]}
+{"client_id":"uaa_admin","authorized_grant_types":["client_credentials"]}
+```
+
+The `our_uaa_cli` client is permitted to authenticate users via their password because of `"authorized_grant_types":["refresh_token","password"]`.
