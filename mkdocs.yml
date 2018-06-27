@@ -5,8 +5,8 @@ pages:
   - Deploy UAA: deploy-uaa.md
   - UAA and Client Apps: uaa-and-client-apps.md
   - Users: users.md
-  - Authenticating Client with Password: authenticating-client-via-password.md
-  - Authenticating Client via Web UI: authenticating-client-via-authcode.md
+  - Authenticating User with Password: authenticating-user-via-password.md
+  - Authenticating User via Web UI: authenticating-user-via-authcode.md
   - User Permissions: user-permissions.md
   - Client Permissions: client-permissions.md
 

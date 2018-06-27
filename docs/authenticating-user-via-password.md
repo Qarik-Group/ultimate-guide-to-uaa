@@ -1,3 +1,5 @@
+# Authenticating User with Password
+
 For the `uaa` CLI application to act on behalf of a user - with the permission of the user - then user will need to authenticate themselves. That is, to prove that they are who they claim to be. The simplest method is for a user to provide the secret password for their UAA user account.
 
 In this section, the user will give their username (who they claim to be) and their password (their proof that it is them) to the `uaa` client application, rather than to the UAA.
@@ -8,7 +10,7 @@ For a UAA client to be allowed to authorize users with the UAA it needs a UAA cl
 
 We can use the `uaa` - authenticated as the `uaa_client` client - to create a new UAA client:
 
-```
+```text
 uaa-deployment auth-client
 uaa create-client our_uaa_cli -s our_uaa_cli_secret \
   --authorized_grant_types password,refresh_token \
@@ -20,13 +22,13 @@ uaa create-client our_uaa_cli -s our_uaa_cli_secret \
 
 A user can now provide the `uaa` CLI permission to interact with the UAA on its behalf:
 
-```
+```text
 uaa get-password-token uaa_cli -s uaa_cli_secret -u drnic -p drnic_secret
 ```
 
 To demonstrate that the `uaa` is now operating on behalf of the `drnic` user:
 
-```
+```text
 uaa userinfo
 ```
 
@@ -47,4 +49,3 @@ The JSON output might look like:
 ```
 
 That is, the `uaa` CLI has authenticated as `drnic` user, and is authorized to look up that user's personal information. User Authentication & Authorization. UAA. Boomshakalaka.
-
