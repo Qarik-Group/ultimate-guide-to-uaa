@@ -7,6 +7,7 @@ pages:
   - Users: users.md
   - Authenticating User with Password: authenticating-user-via-password.md
   - Authenticating User via Web UI: authenticating-user-via-authcode.md
+  - Simple Web Client: simple-web-client.md
   - API Authentication: api-authentication.md
   - User Permissions: user-permissions.md
   - Real-world UAA Client Examples: real-world-client-examples.md
