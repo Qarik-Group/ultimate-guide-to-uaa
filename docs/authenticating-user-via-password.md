@@ -39,7 +39,7 @@ The JSON output might look like:
   "user_name": "drnic",
   "given_name": "Dr Nic",
   "family_name": "Williams",
-  "email": "drnic@starkandwayne",
+  "email": "drnic@starkandwayne.com",
   "phone_number": null,
   "previous_logon_time": 1529661057132,
   "name": "Dr Nic Williams"

@@ -1,3 +1,21 @@
+# User Permissions
+
+But `drnic` cannot use `uaa` CLI to perform other API requests that have not been permitted to `drnic`, that `uaa` has requested from `drnic`, or that `drnic` has not permitted to `uaa` application:
+
+```text
+$ uaa list-clients --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin clients.read clients.admin zones.uaa.admin"}
+
+$ uaa list-users --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.read zones.uaa.admin"}
+$ uaa get-user drnic --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.read zones.uaa.admin"}
+
+$ uaa create-user foo --email foo@bar.com --givenName Foo --familyName Bar --verbose
+{"error":"insufficient_scope","error_description":"Insufficient scope for this resource","scope":"uaa.admin scim.write scim.create zones.uaa.admin"}
+```
+
+
 Each new user is automatically added as a member of various groups:
 
 ```

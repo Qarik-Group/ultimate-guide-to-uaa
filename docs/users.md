@@ -11,7 +11,7 @@ Continuing as the `uaa_admin` client, we can create new users and also look up t
 
 ```text
 uaa create-user drnic \
-  --email drnic@starkandwayne \
+  --email drnic@starkandwayne.com \
   --givenName "Dr Nic" \
   --familyName "Williams" \
   --password drnic_secret
@@ -39,7 +39,7 @@ The JSON output might be similar to:
   },
   "emails": [
     {
-      "value": "drnic@starkandwayne",
+      "value": "drnic@starkandwayne.com",
       "primary": false
     }
   ],
