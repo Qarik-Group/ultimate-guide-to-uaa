@@ -1,8 +1,15 @@
 # Authenticating User via Web UI
 
-The risk of a user providing their username/password to a UAA third-party client application is that a sneaky client application might store the raw username/password and reuse them later without the user's permission.
+It is common for CLIs to support user login via username/password. But a risk of a user providing their username/password to a UAA third-party client application is that a sneaky client application might store the raw username/password and reuse them later without the user's permission.
 
-This risk can be avoided by never giving the user's credentials to third-party applications, rather only giving them directly to the UAA web UI. That is, the third-party client application delgates the login process to the UAA user interface, and in return receives a authorization token that the application can use to make subsequent API requests on behalf of the user.
+Fundamentally, a UAA clients do not need a user's username and password - they only need authoriziation to act on behalf of a user.
+
+Fortunately, the UAA allows UAA clients to gain user authentication and authorization without them asking for a user's password. A UAA client can temporarily direct the user to the UAA web UI. It is more common to see web application's "Login" button redirect the user to a login page that is a different web application - in our case, it would be the UAA - before being returned to the original web application. It is less common for CLI applications, but just as important for them to support for user security.
+
+The mechanism of authentication and authorization is an authorization code received after the user is returned from the UAA Web UI.
+That is, the third-party client application delgates the login process to the UAA user interface, and in return receives a authorization token that the application can use to make subsequent API requests on behalf of the user.
+
+Once again we will use the `uaa` CLI to perform the administrative task of creating a new UAA client, and then using it to login as a user.
 
 First, register a new UAA client that is designed to allow the `uaa` to be used by normal UAA users.
 
@@ -14,18 +21,7 @@ uaa create-client uaa-cli-authcode -s uaa-cli-authcode \
   --scope openid
 ```
 
-Typically each third-party application in the world will have its own registered UAA client. They become synomynous. If we talk about the application, we implicitly can refer to its UAA client, and vice versa.
-
-Some examples:
-
-* The Cloud Foundry CLI `cf` primarily interacts with a target UAA via a client `cf` ([UAA configuration](https://github.com/cloudfoundry/cf-deployment/blob/master/cf-deployment.yml#L415-L423))
-* The BOSH CLI `bosh` interacts with a target UAA via a client `bosh_cli` ([UAA configuration](https://github.com/cloudfoundry/bosh-deployment/blob/master/uaa.yml#L51-L59), [`bosh` cli configuration](https://github.com/cloudfoundry/bosh-cli/blob/master/cmd/session.go#L75-L76))
-
-A third-party application might use multiple UAA clients - each with different scopes of authority. For example, the `cf` CLI can use `cloud_controller_username_lookup` to convert UAA user IDs back into readable names (see [definition of client](https://github.com/cloudfoundry/cf-deployment/blob/38b304405764e1307f606d02856e4366b2337cbd/cf-deployment.yml#L423-L426)).
-
-The `uaa` third-party UAA client application is special - it can take on the behavior/authorities of any UAA client. Hence, each of its authentication/authorization commands require use to pass the client/secret.
-
-Next, the user can authorize the `uaa` without providing it their username/password:
+Next, you can authenticate as `drnic` and then authorize the `uaa` CLI without providing the username/password directly to the CLI:
 
 ```text
 uaa get-authcode-token uaa-cli-authcode -s uaa-cli-authcode --port 9876
@@ -40,6 +36,8 @@ Waiting for authorization redirect from UAA...
 ```
 
 The user's web browser will be redirected to the UAA UI. If they have not already authenticated (logged in) then they will be prompted to do that.
+
+![uaa-web-user-login](images/uaa-web-user-login.png)
 
 Next, they will be asked to grant authorization to the `uaa` CLI (via its `uaa-cli-authcode` UAA client):
 
