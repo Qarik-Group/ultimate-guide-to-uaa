@@ -4,11 +4,9 @@ For the `uaa` CLI application to act on behalf of a user - with the permission o
 
 In this section, the user will give their username (who they claim to be) and their password (their proof that it is them) to the `uaa` client application, rather than to the UAA.
 
-The `uaa` CLI will forward the username/password to the UAA API to get authorization to act on behalf of the user.
+The `uaa` CLI will forward the username/password to the UAA API to get authorization to act on behalf of the user; for example, to look up its own profile information and its associated groups. First and foremostly, to login as a UAA user is to confirm that the current user is indeed authenticated as that UAA user and can proceed with more requests with its data.
 
-For a UAA client to be allowed to authorize users with the UAA it needs a UAA client to exist with an `authorized_grant_types` list that includes `password`.
-
-We can use the `uaa` - authenticated as the `uaa_client` client - to create a new UAA client:
+To allow the `uaa` CLI to authenticate as `drnic` it will need to act with a new UAA client. Handily the `uaa` CLI can create new UAA clients:
 
 ```text
 uaa-deployment auth-client
@@ -20,7 +18,7 @@ uaa create-client our_uaa_cli -s our_uaa_cli_secret \
   --refresh_token_validity 86400
 ```
 
-A user can now provide the `uaa` CLI permission to interact with the UAA on its behalf:
+We can now authenticate as `drnic` UAA user via the `uaa` CLI. That is, we can authenticate and grant permission to the `uaa` client application to interact with the UAA on behalf of `drnic`:
 
 ```text
 uaa get-password-token uaa_cli -s uaa_cli_secret -u drnic -p drnic_secret
@@ -84,3 +82,5 @@ The output will include our two clients `uaa_admin` and `our_uaa_cli`:
 ```
 
 The `our_uaa_cli` client is permitted to authenticate users via their password because of `"authorized_grant_types":["refresh_token","password"]`.
+
+When we created the `our_uaa_cli` client at the start of the section, we used the flag `uaa create-client our_uaa_cli --authorized_grant_types password,refresh_token` to specify the `password` authorization grant type.
