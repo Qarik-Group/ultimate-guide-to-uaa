@@ -264,8 +264,6 @@ env() {
         exit 0
     fi
     echo "export UAA_URL=https://$(get_var internal_ip):8443"
-    echo "export UAA_CLIENT=uaa_admin"
-    echo "export UAA_CLIENT_SECRET=$(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)"
     echo "export UAA_CA_CERT='$(cat $(ca_cert))'"
 }
 
