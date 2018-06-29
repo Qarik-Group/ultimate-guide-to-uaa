@@ -1,18 +1,20 @@
 site_name: Ultimate Guide to UAA by Stark & Wayne
 pages:
-  - Introduction: index.md
-  - Install uaa CLI: install-cli.md
-  - Deploy UAA: deploy-uaa.md
-  - UAA and Client Apps: uaa-and-client-apps.md
-  - Users: users.md
-  - Authenticating User with Password: authenticating-user-via-password.md
-  - Authenticating User via Web UI: authenticating-user-via-authcode.md
-  - API Authentication: api-authentication.md
-  - Simple Web Client: simple-web-client.md
-  - User Permissions: user-permissions.md
-  - Real-world UAA Client Examples: real-world-client-examples.md
-  - Client Permissions: client-permissions.md
-
+  - Guide:
+    - Introduction: index.md
+    - Install uaa CLI: install-cli.md
+    - Deploy UAA: deploy-uaa.md
+    - UAA and Client Apps: uaa-and-client-apps.md
+    - Users: users.md
+    - Authenticating User with Password: authenticating-user-via-password.md
+    - Authenticating User via Web UI: authenticating-user-via-authcode.md
+    - API Authentication: api-authentication.md
+    - Simple Web Client: simple-web-client.md
+    - User Permissions: user-permissions.md
+    - Real-world UAA Client Examples: real-world-client-examples.md
+    - Client Permissions: client-permissions.md
+  - Case Study Cloud Foundry:
+    - UAA Clients: case-study-cf/uaa-clients.md
 theme:
   name: 'material'
   custom_dir: 'theme-overrides'
