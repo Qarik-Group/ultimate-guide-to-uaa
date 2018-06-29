@@ -18,6 +18,7 @@ pages:
     - UAA Clients: case-study-cf/uaa-clients.md
     - cloud_controller_username_lookup: case-study-cf/cloud_controller_username_lookup.md
     - cc_service_key_client: case-study-cf/cc_service_key_client.md
+    - cc-service-dashboards: case-study-cf/cc-service-dashboards.md
 theme:
   name: 'material'
   custom_dir: 'theme-overrides'
