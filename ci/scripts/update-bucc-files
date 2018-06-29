@@ -1,0 +1,15 @@
+#!/bin/bash
+
+: ${BUCC_DIR:?required}
+
+ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )"
+cd $ROOT
+
+pushd ops
+  ops=$(ls *.yml)
+popd
+for operator in $ops; do
+  if [[ -f $BUCC_DIR/ops/$operator ]]; then
+    cp $BUCC_DIR/ops/$operator $ROOT/ops
+  fi
+done
