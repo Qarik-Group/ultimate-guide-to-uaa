@@ -78,8 +78,6 @@ tcp_router:
 
 ## `cc_routing`
 
-## `cc_service_key_client`
-
 ## `cf`
 
 The `cf` client is used by the `cf` CLI.
@@ -97,12 +95,3 @@ The `cf` client is used by the `cf` CLI.
 ## `tcp_emitter`
 
 ## `tcp_router`
-
-
-
-
-
-
-
-
-
