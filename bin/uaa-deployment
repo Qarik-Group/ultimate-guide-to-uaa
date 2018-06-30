@@ -265,6 +265,7 @@ env() {
     fi
     echo "export UAA_URL=https://$(get_var internal_ip):8443"
     echo "export UAA_CA_CERT='$(cat $(ca_cert))'"
+    echo "export UAA_CA_CERT_FILE='$(ca_cert)'"
 }
 
 routes() {
