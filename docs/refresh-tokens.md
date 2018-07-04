@@ -278,3 +278,7 @@ Before you forget, if you followed along above and created `operators/8-refresh-
 rm operators/8-refresh-tokens-jwt.yml
 uaa-deployment up
 ```
+
+## Acknowledgements
+
+My review of refresh tokens in this section was thanks to discussions with Adam Eijdenberg. Adam is currently working for the Australian Govt running their Cloud Foundry platform, and previously worked at Google on OAuth2 for their Google APIs. He has a talk on [YouTube discussing OAuth2 and Google APIs](https://www.youtube.com/watch?v=marDcG1icDg) from a few years back.
