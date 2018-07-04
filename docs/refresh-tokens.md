@@ -4,7 +4,7 @@ The UAA offers refresh tokens to allow client applications to routinely check th
 
 ## Access Tokens and Refresh Tokens
 
-When a user initially authenticates themselves with a UAA/OAuth2 authentication server we put them through the riggers of proving their identity - they must provide their email and password, maybe a multi-factor authentication/2FA challenge where they must get their phone out of their pocket, and the user may need to explicitly grant authorization to that client application to access some of their personal data. In exchange, the client application receives an stateful access token that it can use for a limited amount of time. The access token is encoded using JWT which allows different client applications to decode it many times to discover who the user is, what scopes the application is permitted to access for the user, and how much longer this access token is valid.
+When a user initially authenticates themselves with a UAA/OAuth2 authentication server we put them through the riggers of proving their identity - they must provide their email and password, maybe a multi-factor authentication/2FA challenge where they must get their phone out of their pocket, and the user may need to explicitly grant authorization to that client application to access some of their personal data. In exchange, the client application receives an access token that it can use for a limited amount of time. The access token is encoded using JWT which allows different client applications to decode it many times to discover who the user is, what scopes the application is permitted to access for the user, and how much longer this access token is valid.
 
 Eventually an access token expires and client applications should stop assuming its contents are valid. The user might no longer wish to authorize that application to access the same scope of their personal data, the user might have revoked authorization to the client applications entirely, or conversely the user themselves might no longer have access to some groups/scopes/permissions. When an access token expires each client application would need each user to login via the UAA/OAuth2 authorization server again. OMG that would be tedious for everyone.
 
@@ -58,7 +58,7 @@ It goes without saying that an opaque refresh token could not easily be confused
 
 The opaque refresh token is also small. It can be easily stored in the small browser cookies, together with the larger access token.
 
-## JWT refresh tokens
+## JWT Refresh Tokens
 
 The UAA offers an alternate refresh token - all the metadata for refreshing access tokens is encoded inside the refresh token. The decoded data is JSON and it is in a format that looks very similar to a normal access token. A JWT refresh token, like a JWT access token, is encoded as a JSON Web Token.
 
