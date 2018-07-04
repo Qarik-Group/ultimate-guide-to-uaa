@@ -14,6 +14,7 @@ pages:
     - Real-world UAA Client Examples: real-world-client-examples.md
     - Client Permissions: client-permissions.md
     - OpenID: openid.md
+    - JSON Web Token / JWT: json-web-token.md
   - Case Study Cloud Foundry:
     - UAA Clients: case-study-cf/uaa-clients.md
     - cloud_controller_username_lookup: case-study-cf/cloud_controller_username_lookup.md
