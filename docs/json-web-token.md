@@ -37,6 +37,10 @@ Since a JWT string is easily encoded and decoded by anyone it is important to en
 
 ![jwt-signature-verified](images/jwt-signature-verified.png)
 
+## Refresh Access Token
+
+`jtw` vs `opaque` methods
+
 ## Rotating JWT keys
 
 TODO: Waiting on Slack discussion on how UAA team expects ppl to curate their keys overtime via BOSH.
@@ -111,3 +115,9 @@ The output might be similar to:
   }
 ]
 ```
+
+## Offline Validation
+
+One of the features of JWT is the ability to validate each JWT without accessing the UAA. An access token published for a user can be passed into applications that themselves do not have direct access to the same UAA.
+
+
