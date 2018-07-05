@@ -1,5 +1,7 @@
 ## What is user authentication and user authorization?
 
+Future reference: https://oauth.net/articles/authentication/
+
 When you visit https://mail.google.com or https://outlook.live.com you want to see your emails. If you use your mobile phone or desktop email applications you want to see your emails. These applications do not know who "you " are. You need to convince the software of who you are. The real you. 100% authentic you. To the software, you are a User. All your emails - sent and received - are linked within the software to your User account. Most typically when you open a website or software you will indicate which user account is your with an email address or username. You will then provide a password - known only to you and the software - that authenticates that you have access to this User account.
 
 Once you have authenticated which User account you want to access, the software needs to determine how much functionality and data to give you access to. Low hanging fruit - you would be authorized to view the emails you have sent or received.

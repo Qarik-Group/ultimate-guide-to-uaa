@@ -258,6 +258,7 @@ Please configure your UAA to publish the short, opaque refresh tokens.
 
 ## Patch Your Resource Servers to Detect JWT Refresh Tokens
 
+It is not ok for Resource Servers to accept JWT refresh tokens in lieu of access tokens. It is a CVE for each API, such as this [CVE raised upon Cloud Foundry's Cloud Controller API](https://www.cloudfoundry.org/blog/cve-2018-1195/).
 At the time of writing, the UAA cannot be configured to prevent publishing JWT tokens; and there is an API endpoint to allow a mischevious client application to request a JWT refresh token even if you've configured the UAA to publish opaque refresh tokens.
 
 To say that a different way, even if you configure your UAA to only publish opaque refresh tokens there may still be JWT refresh tokens floating about your systems.
