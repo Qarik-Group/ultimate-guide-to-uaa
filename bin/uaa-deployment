@@ -150,7 +150,6 @@ usage() {
     echo "  info -- UAA information"
     echo "  auth-client -- configures uaa cli as a client only"
     echo "  auth-user -- authenticate uaa cli as an admin user"
-    echo "  routes -- add routes for virtualbox"
     exit 1
 }
 
@@ -267,18 +266,6 @@ env() {
     echo "export UAA_CA_CERT='$(cat $(ca_cert))'"
     echo "export UAA_CA_CERT_FILE='$(ca_cert)'"
 }
-
-routes() {
-    case $(platform) in
-        darwin)
-            sudo route add -net 10.244.0.0/16    192.168.50.6
-            ;;
-        linux)
-            sudo route add -net 10.244.0.0/16 gw 192.168.50.6
-            ;;
-    esac
-}
-
 
 info() {
     echo "UAA:"
@@ -465,10 +452,6 @@ case "$1" in
     int)
         shift
         int "$@"
-        ;;
-
-    routes)
-        routes
         ;;
 
     *)
