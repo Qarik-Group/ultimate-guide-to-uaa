@@ -4,5 +4,6 @@ site
 tmp
 .DS_Store
 /bin/bosh
+/bin/bbr
 /vars.yml
 /vars.yml.bck

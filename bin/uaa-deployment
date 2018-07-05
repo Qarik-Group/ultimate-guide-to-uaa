@@ -148,6 +148,7 @@ usage() {
     echo "  env -- sourceable envrionment variables for cli clients"
     echo "  int -- wrapper for 'bosh int' for the bosh manifest"
     echo "  info -- UAA information"
+    # echo "  bbr -- backup & restore UAA" - WIP
     echo "  auth-client -- configures uaa cli as a client only"
     echo "  auth-user -- authenticate uaa cli as an admin user"
     exit 1
@@ -274,6 +275,29 @@ info() {
     echo "  client_secret: $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/clients/uaa_admin/secret)"
     echo "  username: $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/name)"
     echo "  password: $(int --path /instance_groups/0/jobs/name=uaa/properties/uaa/scim/users/0/password)"
+}
+
+_bbr() {
+    local url="https://github.com/cloudfoundry-incubator/bosh-backup-and-restore/releases/download"
+    local version=$(grep bbr ${repo_root}/.versions | cut -d= -f2)
+    local cli_path=${repo_root}/bin/bbr
+
+    set -x
+    if ! ( [ -f ${cli_path} ] && ${cli_path} --version | head -n 1 | grep ${version} > /dev/null); then
+      echo "installing bbr cli '${version}' into: ${repo_root}/bin/"
+      pushd $(mktemp -d)
+      curl -s -L >bbr.tar "${url}/v${version}/bbr-${version}.tar"
+      tar -xf bbr.tar
+      if [ "$(platform)" == "darwin" ]; then
+          mv releases/bbr-mac ${repo_root}/bin/bbr
+      else
+          mv releases/bbr ${repo_root}/bin/
+      fi
+      popd
+    fi
+
+    local user=$(int --path /instance_groups/name=bosh/jobs/name=user_add/properties/users/0/name)
+    ${cli_path} director --host $(ip) --username ${user} --private-key-path $(ssh_private_key) "$@"
 }
 
 _ensure_bosh_cli_installed() {
@@ -442,6 +466,11 @@ case "$1" in
 
     auth-user)
         _uaa_auth_user "$@"
+        ;;
+
+    bbr)
+        shift
+        _bbr "$@"
         ;;
 
     ssh)
