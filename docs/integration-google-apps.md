@@ -8,44 +8,7 @@ https://developers.google.com/identity/protocols/OAuth2
 
 ```text
 mkdir -p operators
-cat > operators/8-google-apps-oidc-provider.yml <<YAML
-- type: replace
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/uaa/url
-  value: "https://((internal_ip)).sslip.io:8443"
-
-- type: replace
-  path: /variables/name=mbus_bootstrap_ssl/options/alternative_names/-
-  value: "https://((internal_ip)).sslip.io:8443"
-
-- type: replace
-  path: /variables/name=uaa_ssl/options/alternative_names/-
-  value: "https://((internal_ip)).sslip.io:8443"
-
-- type: replace
-  path: /variables/name=uaa_service_provider_ssl/options/alternative_names/-
-  value: "https://((internal_ip)).sslip.io:8443"
-
-- type: replace
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/login/oauth?/providers/google
-  value:
-    type: oidc1.0
-    authUrl: https://accounts.google.com/o/oauth2/v2/auth
-    tokenUrl: https://www.googleapis.com/oauth2/v4/token
-    tokenKeyUrl: https://www.googleapis.com/oauth2/v3/certs
-    issuer: https://accounts.google.com
-    redirectUrl: "https://((internal_ip)):8443"
-    scopes:
-      - openid
-      - email
-    linkText: Login with Google
-    showLinkText: true
-    addShadowUserOnLogin: true
-    relyingPartyId: ((google_client))
-    relyingPartySecret: ((google_client_secret))
-    skipSslValidation: false
-    attributeMappings:
-      user_name: email
-YAML
+cp ops-examples/google-oidc/7-google-oidc-provider.yml operators/
 ```
 
 In `vars.yml` add the following two lines:
@@ -126,3 +89,27 @@ The output might look similar to:
 ```
 
 Of note is `"origin": "google"` which indicates that the user originated from Google. Previously our `uaa create-user` users had `"origin": "uaa"`.
+
+## Restrict Google Apps Users by Email Domains
+
+In the example above I chose my `drnic@starkandwayne.com` Google account, but I also could have chosen my `drnicwilliams@gmail.com` account and the UAA would have happily created a new UAA user for it. Let's say that's not what I want. Let's say you can only "Login with Google" with a starkandwayne.com email account.
+
+Copy the `ops-examples/google-oidc/8-google-apps-restrict-domain.yml` operator file into `operators/` folder:
+
+```text
+cp ops-examples/google-oidc/8-google-apps-restrict-domain.yml operators/8-google-apps-restrict-domain.yml
+```
+
+Add the following line to your `vars.yml` file to specify your own Google Apps email domain:
+
+```yaml
+google_restrict_domain: starkandwayne.com
+```
+
+Actually, you can create your own file like `operators/8-google-apps-restrict-domain.yml` to support multiple domains. The `uaa` job has a property `login.oauth.providers.google.emailDomain` that is an array of domains.
+
+Run the `uaa-deployment up` command again to update your UAA configuration:
+
+```text
+uaa-deployment up
+```
