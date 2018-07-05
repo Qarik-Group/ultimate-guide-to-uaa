@@ -4,6 +4,7 @@ pages:
     - Introduction: index.md
     - Install uaa CLI: install-cli.md
     - Deploy UAA: deploy-uaa.md
+    - Basic Operations: basic-operations.md
     - UAA and Client Apps: uaa-and-client-apps.md
     - Users: users.md
     - Authenticating User with Password: authenticating-user-via-password.md
