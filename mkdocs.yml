@@ -16,6 +16,7 @@ pages:
     - OpenID: openid.md
     - JSON Web Token / JWT: json-web-token.md
     - Refresh Tokens: refresh-tokens.md
+    - Integrate UAA and Google Apps: integration-google-apps.md
   - Case Study Cloud Foundry:
     - UAA Clients: case-study-cf/uaa-clients.md
     - cloud_controller_username_lookup: case-study-cf/cloud_controller_username_lookup.md
