@@ -39,6 +39,8 @@ If it was https://192.168.50.6:8443/ before then it will now be https://192.168.
 
 Click on "Login with Google" link. You will be redirected to choose a Google account and authorize the UAA. When you return to the UAA home page your email will be your UAA user.
 
+![google-account-select](images/google-account-select.png)
+
 ## Google User in UAA
 
 To view your new user, first update your local environment variables, login as `uaa_admin` client, and run `uaa list-users`:
