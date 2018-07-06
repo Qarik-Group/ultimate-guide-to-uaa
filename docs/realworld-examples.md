@@ -180,6 +180,8 @@ BOSH is a platform to run systems such as Cloud Foundry, or the UAA, on any clou
 
 The resource server is the [BOSH API](https://bosh.io/docs/director-api-v1/). The BOSH API and UAA are typically colocated on the same VM. The BOSH API is on port `25555` and the UAA is on port `8443` (like our `uaa-deployment up` UAA).
 
+[BOSH API uses UAA claims](https://bosh.io/docs/director-users-uaa-perms/) to limit its own functionality for users/clients.
+
 ```text
 export BOSH_ENVIRONMENT=10.10.1.4
 export BOSH_CA_CERT='...'
@@ -203,4 +205,12 @@ git clone https://github.com/starkandwayne/bucc ~/workspace/bucc
 source <(~/workspace/bucc/bin/bucc env)
 bucc up
 source <(~/workspace/bucc/bin/bucc env)
+```
+
+The `bucc` CLI includes a helper to authenticate the `uaa` CLI:
+
+```text
+$ bucc uaa
+Target set to https://192.168.50.6:8443
+Access token successfully fetched and added to context.
 ```
