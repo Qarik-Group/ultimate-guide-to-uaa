@@ -1,7 +1,0 @@
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/instance_type
-  value: ((instance_type))
-
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/ephemeral_disk/size
-  value: ((ephemeral_disk_size))

@@ -1,3 +1,0 @@
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/load_balancer?
-  value: ((load_balancer))

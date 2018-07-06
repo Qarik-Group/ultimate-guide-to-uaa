@@ -1,3 +1,0 @@
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/lb_target_groups?
-  value: ((lb_target_groups))

@@ -1,3 +1,0 @@
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/target_pool?
-  value: ((target_pool))

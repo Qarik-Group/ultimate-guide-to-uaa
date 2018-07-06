@@ -1,3 +1,0 @@
-- type: replace
-  path: /resource_pools/name=vms/cloud_properties/spot_bid_price?
-  value: ((spot_bid_price))

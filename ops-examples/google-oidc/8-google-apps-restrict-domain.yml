@@ -1,5 +1,0 @@
-# discussed in integration-google-apps section
-- type: replace
-  path: /instance_groups/name=bosh/jobs/name=uaa/properties/login/oauth?/providers/google/emailDomain?
-  value:
-  - ((google_restrict_domain))
