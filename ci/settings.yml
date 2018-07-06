@@ -7,13 +7,14 @@ meta:
   cf:
     uri: https://api.run.pivotal.io
     organization: starkandwayne
-    space-production: ultimate-guide-to-bosh
+    space-production: ultimate-guide-to-uaa
+    space-staging: ultimate-guide-to-uaa-staging
     username: ((!cf-pws-username))
     password: ((!cf-pws-password))
 
   github:
     owner: starkandwayne
-    repo: uaa-deployment
+    repo: ultimate-guide-to-uaa
     branch: master
     private_key:  ((!github-private-key))
     access_token: ((!github-access-token))

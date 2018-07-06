@@ -77,4 +77,4 @@ resources:
       username:     (( grab meta.cf.username ))
       password:     (( grab meta.cf.password ))
       organization: (( grab meta.cf.organization ))
-      space:        (( grab meta.cf.space-production ))
+      space:        (( grab meta.cf.space-staging ))
