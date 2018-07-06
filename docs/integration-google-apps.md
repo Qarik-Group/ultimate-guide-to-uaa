@@ -94,6 +94,8 @@ Of note is `"origin": "google"` which indicates that the user originated from Go
 
 ## Restrict Google Apps Users by Email Domains
 
+NOTE: This feature is actually blocked on https://github.com/cloudfoundry/uaa/pull/839
+
 In the example above I chose my `drnic@starkandwayne.com` Google account, but I also could have chosen my `drnicwilliams@gmail.com` account and the UAA would have happily created a new UAA user for it. Let's say that's not what I want. Let's say you can only "Login with Google" with a starkandwayne.com email account.
 
 Copy the `ops-examples/google-oidc/8-google-apps-restrict-domain.yml` operator file into `operators/` folder:
