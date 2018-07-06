@@ -2,6 +2,7 @@ site_name: Ultimate Guide to UAA by Stark & Wayne
 pages:
   - Guide:
     - Introduction: index.md
+    - Upstream Issues: upstream-issues.md
     - Install uaa CLI: install-cli.md
     - Deploy UAA: deploy-uaa.md
     - Basic Operations: basic-operations.md
@@ -9,6 +10,7 @@ pages:
     - Users: users.md
     - Authenticating User with Password: authenticating-user-via-password.md
     - Authenticating User via Web UI: authenticating-user-via-authcode.md
+    - Real-world Examples: realworld-examples.md
     - API Authentication: api-authentication.md
     - Simple Web Client: simple-web-client.md
     - User Permissions: user-permissions.md
