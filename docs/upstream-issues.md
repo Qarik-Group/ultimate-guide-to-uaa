@@ -9,3 +9,4 @@ The [ultimate-guide-to-uaa-examples](https://github.com/starkandwayne/ultimate-g
 ## [realworld-examples.md](/realworld-examples/#bosh-cli)
 
 * `bucc uaa` command is available in the next release of BUCC after v0.5.0. [[bucc#136](https://github.com/starkandwayne/bucc/pull/136/files)]
+* `bosh env` shows "User admin" when actually authorized as "client admin" [[bosh-cli#451](https://github.com/cloudfoundry/bosh-cli/issues/451)]
