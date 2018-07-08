@@ -1,4 +1,4 @@
-# Real-world Examples
+# Real World Examples
 
 ## Cloud Foundry CLI
 
