@@ -245,9 +245,15 @@ export BOSH_CLIENT_SECRET=password
 bosh env
 ```
 
-Even if you are not a BOSH user, you can provision a single VM BOSH API using the a similar approach we've been running our UAA. The `uaa-deployment up` tool originated with a BOSH/UAA version [BUCC](https://github.com/starkandwayne/bucc) by [Stark & Wayne](https://www.starkandwayne.com).
+To view the API calls from the `bosh` CLI to the UAA authorization server and the BOSH Director API resource server:
 
-You will need to tear down your local UAA as it uses the same local IP address:
+```text
+export BOSH_LOG_LEVEL=debug
+```
+
+Even if you are not yet a BOSH user, you can easily provision a single VM BOSH API using the a similar approach we've been running our UAA. The `uaa-deployment up` tool originated with a BOSH/UAA version [BUCC](https://github.com/starkandwayne/bucc) by [Stark & Wayne](https://www.starkandwayne.com).
+
+You will need to tear down your local UAA as it uses the same local IP address managed via VirtualBox:
 
 ```text
 uaa-deployment down
