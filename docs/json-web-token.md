@@ -29,6 +29,29 @@ uaa context --access_token
 
 ![jwt-user-password](images/jwt-user-password.png)
 
+## Decoding secret JWTs locally
+
+The [jwt.io](https://jwt.io) website is pretty, but it is a third-party site that we don't control.
+
+Your access token grants anyone/any system with it access to systems that want to agree to it. You should not give it away to strangers who have access to your systems. Fortunately, your `uaa-deployment up` UAA is local to your laptop, is short lived, and does not contain critical data; so we can be less worried about pasting our example access tokens into [jwt.io](https://jwt.io).
+
+But please do not copy and pasting access tokens to your production systems into [jwt.io](https://jwt.io), or any third-party site that you don't trust entirely.
+
+For example, you might want to inspect your access token to your public Cloud Foundry authorization. Anyone who gets hold of this token will have access until it expires in a few hours time. You can find `AccessToken: bearer <access token>` within `~/.cf/config.json`.
+
+Instead, here are some examples for decoding JWT tokens locally and safely:
+
+```text
+bearer_and_access_token=$(cat ~/.cf/config.json  | jq -r .AccessToken)
+echo $bearer_and_access_token | python -c "import base64, sys; print base64.urlsafe_b64decode(sys.stdin.read().split(' ')[1].split('.')[1])" | jq .
+```
+
+Or try the purpose-built [jwt-cli](https://github.com/mike-engel/jwt-cli):
+
+```text
+jwt decode $(cat ~/.cf/config.json| jq -r .AccessToken | cut -d' ' -f2)
+```
+
 ## Verify JWT signature
 
 Since a JWT string is easily encoded and decoded by anyone it is important to ensure that we trust that our JWT access tokens were definitely provided by our own UAA, not someone else we don't trust.
