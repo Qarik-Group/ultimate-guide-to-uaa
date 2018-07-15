@@ -13,3 +13,9 @@ The [ultimate-guide-to-uaa-examples](https://github.com/starkandwayne/ultimate-g
 * `bosh.admin` added to new BOSH/UAA users by default - need to update documentation to match [[bosh-deployment#270](https://github.com/cloudfoundry/bosh-deployment/issues/270)]
 
 * BUCC's UAA home page will include link to Concourse CI  [[bucc#133](https://github.com/starkandwayne/bucc/pull/133)]
+
+## UAA documentation
+
+* https://github.com/cloudfoundry/uaa/pull/865 - fix docs for GET /Users/ID scopes required [fixes #862]
+* https://github.com/cloudfoundry/uaa/pull/853 - required configuration in sample cf manifest - **waiting on help**
+* https://github.com/cloudfoundry/uaa/pull/852 - generated cf manifest switch to 'routes:' instead of deprecated 'host:'
