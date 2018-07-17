@@ -2,6 +2,12 @@
 
 This book is a WIP, and whilst writing it various pull requests or issues were raised on upstream projects. To help track their status I'll try to track them all here:
 
+## UAA CLI
+
+* https://github.com/cloudfoundry-incubator/uaa-cli/pull/12 - `uaa context --auth_header`
+* https://github.com/cloudfoundry-incubator/uaa-cli/pull/19 - `uaa create-client --autoapprove true`
+* https://github.com/cloudfoundry-incubator/uaa-cli/pull/21 - `uaa remove-member grp usr`
+
 ## Example applications
 
 The [ultimate-guide-to-uaa-examples](https://github.com/starkandwayne/ultimate-guide-to-uaa-examples) project documents its own set of upstream pull requests/branches. Once they are merged these applications will need to update their own dependencies.
