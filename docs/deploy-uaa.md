@@ -1,16 +1,18 @@
 # Deploy UAA
 
-The [Ultimate Guide to UAA](/) book includes an accompanying free tool to deploy a production-grade UAA to your local machine or any cloud infrastructure.
+## Options for running UAA
 
-Alternately, you might be able to use a UAA that accompanyed a Cloud Foundry platform or BOSH environment.
+The [Ultimate Guide to UAA](/) book includes some accompanying free tools to deploy a production-grade UAA to your local machine or any cloud infrastructure, and references to other methods of deploying a UAA or accessing an existing UAA.
 
-If you are Pivotal Cloud Foundry customer, there is also the Single-Sign On tile which provides a UAA on demand.
+If you are Pivotal Cloud Foundry customer, there is also the [Single-Sign On tile](https://docs.pivotal.io/p-identity/) which provides a multi-tenant UAA.
+
+## Local UAA using VirtualBox
 
 This book will introduce you to the `uaa-deployment` tool that allows you to deploy the UAA locally.
 
 Your UAA will have generated certificates, randomized passwords, and its PostgreSQL-backed data will be stored on a persistent disk volume on your target cloud infrastructure.
 
-The [`uaa-deployment` CLI](https://github.com/starkandwayne/uaa-deployment) tool is built for Linux/OSX/Bash environments.
+The [`u` CLI](https://github.com/starkandwayne/uaa-deployment) tool is built for Linux/OSX/Bash environments.
 
 To download and prepare the `uaa-deployment` project using `git`:
 
@@ -23,13 +25,13 @@ source .envrc
 To deploy or upgrade a UAA server to your local machine via VirtualBox:
 
 ```text
-uaa-deployment up
+u up
 ```
 
 Once our UAA is running we can view the target URL and some admin-level authentication:
 
 ```text
-uaa-deployment info
+u info
 ```
 
 The output might look like:
@@ -59,21 +61,59 @@ Succesfully logging in with the `admin` username/password will look like:
 
 You'll see a corporate logo (the default is "Cloud Foundry"), the title "Where to?", and .... a void of emptiness. This homepage of the UAA can be filled with "tiles" - icons/names for your internal corporate applications that users can possible use. We will revisit this later.
 
-## Upgrading UAA
+### Upgrading
 
-Your UAA, including Java & Tomcat & PostgreSQL, is running on a single VM (via VirtualBox if you run `uaa-deployment up` without the `--cpi` flag). Over time new versions of the UAA or PostgreSQL will be available.
+Your UAA, including Java & Tomcat & PostgreSQL, is running on a single VM (via VirtualBox if you run `u up` without the `--cpi` flag). Over time new versions of the UAA or PostgreSQL will be available.
 
 To upgrade:
 
 ```text
 git pull
-uaa-deployment up
+u up
 ```
 
-## Destroy UAA
+### Destroy UAA
 
 Later when you want to destroy your UAA VM and associated persistent disk:
 
 ```text
-uaa-deployment down
+u down
+```
+
+## Deploy UAA to any Cloud Foundry
+
+The UAA running at https://login.starkandwayne.com/ is hosted on Cloud Foundry, specifically [Pivotal Web Services](https://run.pivotal.io). It was deployed and upgraded using https://github.com/starkandwayne/uaa-deployment-cf
+
+## Deploy cfdev to deploy Cloud Foundry locally
+
+The [`cf dev`](https://github.com/cloudfoundry-incubator/cfdev) project is a fast and easy local Cloud Foundry experience on native hypervisors, which means you get a UAA to boot.
+
+```text
+$ cf dev start
+Downloading Resources...
+Starting VPNKit ...
+Starting the VM...
+Deploying the BOSH Director...
+Deploying CF...
+
+  ██████╗███████╗██████╗ ███████╗██╗   ██╗
+ ██╔════╝██╔════╝██╔══██╗██╔════╝██║   ██║
+ ██║     █████╗  ██║  ██║█████╗  ██║   ██║
+ ██║     ██╔══╝  ██║  ██║██╔══╝  ╚██╗ ██╔╝
+ ╚██████╗██║     ██████╔╝███████╗ ╚████╔╝
+  ╚═════╝╚═╝     ╚═════╝ ╚══════╝  ╚═══╝
+             is now running!
+
+To begin using CF Dev, please run:
+    cf login -a https://api.v3.pcfdev.io --skip-ssl-validation
+
+Admin user => Email: admin / Password: admin
+Regular user => Email: user / Password: pass
+```
+
+To target your new local Cloud Foundry, and its UAA:
+
+```text
+uaa target https://uaa.v3.pcfdev.io/ --skip-ssl-validation
+uaa get-client-credentials-token admin -s admin-client-secret
 ```
