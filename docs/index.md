@@ -69,3 +69,29 @@ So I sat down to explain the UAA to myself with a sequence of tutorials that I w
 Along the way I wrote the `uaa-deployment` CLI to make it much easier to deploy the UAA locally and to any cloud (Amazon Web Services, Google Compute, Microsoft Azure, VMWare vSphere, OpenStack, and more).
 
 I hope you discover the incredible power of the UAA and learn to feel empowered to delegate to it all your user authentication and authorization needs. Once you start using the UAA there will be so much that you no longer have to implement, or have to apologise for not having implemented yet.
+
+## Pronounciation, Spelling, and Grammar
+
+In my head I pronounce UAA "You Aye Aye", rather than "You Ah", or "User Authentication and Authorization". As such, in the text of this book you'll see me writing "a UAA", rather than "an UAA". It sounds better.
+
+The author of this book, Dr Nic Williams, is many things and these affect and confuse his decisions around the grammar used in this book.
+
+He has a PhD in Computer Science from the University of Queensland, Australia - so he's had academic papers and long-form theses reviewed by supervisors who delight in correcting academic grammar.
+
+He is CEO of Stark & Wayne, a pioneering and premier consultancy for all things Cloud Foundry, BOSH, Kubernetes, Concourse CI, and UAA. So he is the author of many emails and chat room comments that are not anchored by formal grammar rules.
+
+He is the author of hundreds of blog posts over the last ten years. He is fortunate to have friends and coworkers who proof read his blog posts, and sometimes they are so shocked by his abuses of any known forms of grammar that they must object and ask for improvements.
+
+He is the author of hundreds of open source projects, each with their own README and documentation. He is generally suspicious that no one reads the English text between code examples.
+
+He is the author of two online books - [Concourse Tutorial](https://concoursetutorial.com) and [Ultimate Guide to BOSH](https://ultimateguidetobosh.com) - that have both received much praise from readers, and receive much errata in the form of dozens of GitHub Pull Requests to correct spelling, grammar, and code examples.
+
+He is Australian. His formative education was Australia, which includes soft fork of Queen's English. He is comfortable in the nurturing embrace of English words spelled as the Queen wishes them spelled. Dear reader, please realise three things: Lego not Legos, colour not color, and the [Oxford Comma could save you $13m](http://www.abc.net.au/news/2017-03-21/the-case-of-the-$13-million-comma/8372956).
+
+We at Stark & Wayne are a diverse mixture of America, Canadian, Dutch, Chinese, German, and Australian. But in this book, let's pick one English dictionary and grammar. Mine. I mean, the Queen of England's.
+
+If you spot a missspelling, please you are welcome to click the Edit pencil at the top of each page and correct it.
+
+If you spot bad grammar, wafflingly long sentences or a list of two or more items that do not end with an Oxford Comma then please click the Edit pencil at the top and offer to correct it. I really appreciate it.
+
+If you spot deliberate irony, like deliberate mistakes as examples then you can smile and move on.
