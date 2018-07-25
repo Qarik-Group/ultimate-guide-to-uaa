@@ -1,6 +1,6 @@
 # JSON Web Token / JWT
 
-The access token is not a random sequence of numbers and letters. Rather it is two encoded JSON objects. The encoded JSON objects are called a JSON Web Token, or JWT.
+The UAA publishes [self-encoded access tokens](https://www.oauth.com/oauth2-servers/access-tokens/self-encoded-access-tokens/). That is, the access token are not a random sequence of numbers and letters that must be looked up in the UAA database. Rather it is two encoded JSON objects. The encoded JSON objects are called a JSON Web Token, or JWT.
 
 We can inspect the contents of any access token using:
 

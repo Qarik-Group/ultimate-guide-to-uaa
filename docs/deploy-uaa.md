@@ -84,6 +84,8 @@ u down
 
 The UAA running at https://login.starkandwayne.com/ is hosted on Cloud Foundry, specifically [Pivotal Web Services](https://run.pivotal.io). It was deployed and upgraded using https://github.com/starkandwayne/uaa-deployment-cf
 
+The `uaa-deployment-cf` variation of `u up` also includes the ability to build bespoke themed versions of the UAA. This allows you to change any HTML templates.
+
 ## Deploy cfdev to deploy Cloud Foundry locally
 
 The [`cf dev`](https://github.com/cloudfoundry-incubator/cfdev) project is a fast and easy local Cloud Foundry experience on native hypervisors, which means you get a UAA to boot.

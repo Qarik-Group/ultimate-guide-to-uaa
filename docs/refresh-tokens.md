@@ -1,6 +1,8 @@
 # Refresh Tokens
 
-The UAA offers refresh tokens to allow client applications to routinely check their authority to act on behalf of a user. I think you need to know what they are, when to use them, and why the UAA default configuration is wrong.
+The UAA access tokens are valid until they expire; there is no way to invalidate any published access token until it expires. Therefore we do not want to publish long-lived access tokens. We want to publish only short-lived access tokens, but provide a way for clients to ask for new access tokens for a long time.
+
+If the user has revoked any grants, if the organization has changed the user's scopes of authority, or if a client has a modified list of required scopes, then an expired short-lived access token will be replaced with a new access token with modified claims. Or the client might not be allowed to receive a new access token at all, and must ceased interacting with resource servers on behalf of that user until the user returns and grants the client authorization again in future.
 
 ## Access Tokens and Refresh Tokens
 
