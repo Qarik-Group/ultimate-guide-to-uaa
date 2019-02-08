@@ -7,4 +7,4 @@ applications:
   routes:
   - route: ultimate-guide-to-uaa-staging.cfapps.io
   - route: www-staging.ultimateguidetouaa.com
-  stack: cflinuxfs2
+  stack: cflinuxfs3
