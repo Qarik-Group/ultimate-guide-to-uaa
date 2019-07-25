@@ -71,7 +71,7 @@ uaa target https://192.168.50.6:8443 --skip-ssl-validation
 uaa get-client-credentials-token uaa_admin -s <uaa_admin_client_secret>
 ```
 
-This time we use the client/client_secret values. We are giving the `uaa` application permission to interact with the UAA API as a peer: one application talking to another application. It has access to all users' data, albeit potentially scoped by functionality (e.g. it mightt be able to list all user information but not be able to modify them). We will discuss scoping in future.
+This time we use the client/client_secret values. We are giving the `uaa` application permission to interact with the UAA API as a peer: one application talking to another application. It has access to all users' data, albeit potentially scoped by functionality (e.g. it might be able to list all user information but not be able to modify them). We will discuss scoping in future.
 
 For your future convenience the `uaa-deployment auth-client` command will perform the same commands to target and authentication with your UAA as the `uaa_admin` UAA admininistrator client, without you needing to copy/paste the client secret:
 
