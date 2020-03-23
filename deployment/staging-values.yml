@@ -1,0 +1,23 @@
+ingress:
+  hosts:
+    - staging.ultimateguidetouaa.com
+    - staging.www.ultimateguidetouaa.com
+    - staging.ultimateguidetouaa.k8s.lke.starkandwayne.com
+  tls:
+    enabled: true
+    certIssuer: "lab-ca-issuer"
+
+initImage:
+  repository: python
+  tag: 3.7
+
+app:
+  org: starkandwayne
+  repo: ultimate-guide-to-uaa
+  commitSHA: "a38a6ee"
+
+  setup_script: |
+    #!/bin/sh
+    pip install 'pymdown-extensions<5.0' 'Markdown<3.0' 'mkdocs<1.0' 'mkdocs-material<3.0'
+    mkdocs build
+    mv /tmp/website/site/* /var/www/
