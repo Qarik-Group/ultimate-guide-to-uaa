@@ -1,5 +1,5 @@
 site_name: Ultimate Guide to UAA by Stark & Wayne
-pages:
+nav:
   - Guide:
     - Introduction: index.md
     - Upstream Issues: upstream-issues.md
