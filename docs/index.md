@@ -2,7 +2,7 @@
 
 Future reference: https://oauth.net/articles/authentication/
 
-When you visit https://mail.google.com or https://outlook.live.com you want to see your emails. If you use your mobile phone or desktop email applications you want to see your emails. These applications do not know who "you " are. You need to convince the software of who you are. The real you. 100% authentic you. To the software, you are a User. All your emails - sent and received - are linked within the software to your User account. Most typically when you open a website or software you will indicate which user account is your with an email address or username. You will then provide a password - known only to you and the software - that authenticates that you have access to this User account.
+When you visit https://mail.google.com or https://outlook.live.com you want to see your emails. If you use your mobile phone or desktop email applications you want to see your emails. These applications do not know who "you " are. You need to convince the software of who you are. The real you. 100% authentic you. To the software, you are a User. All your emails - sent and received - are linked within the software to your User account. Most typically when you open a website or software you will indicate which user account is yours with an email address or username. You will then provide a password - known only to you and the software - that authenticates that you have access to this User account.
 
 Once you have authenticated which User account you want to access, the software needs to determine how much functionality and data to give you access to. Low hanging fruit - you would be authorized to view the emails you have sent or received.
 
@@ -36,7 +36,7 @@ GitHub now redirects me back to your web application or mobile application. Your
 
 Your example application also supports organizations - as a user I can see and edit content only within teams/organizations that I belong.
 
-Instead of you development team spending a lot of time implementing its own UI and business logic for orgnaizations - how to invite and revoke people from teams - you defer again to GitHub. When GitHub redirected me back to your application, it also told you which GitHub organizations I am a member of, and which teams of each organization. For example, I am a member of the [@starkandwayne](https://github.com/starkandwayne) - an excellent consultancy for Cloud Foundry, Kubernetes, and enterprise cloud systems. Your application also has a `@starkandwayne` organization so I am automatically granted permission (authorization) to read and modify its contents within your application.
+Instead of your development team spending a lot of time implementing its own UI and business logic for orgnaizations - how to invite and revoke people from teams - you defer again to GitHub. When GitHub redirected me back to your application, it also told you which GitHub organizations I am a member of, and which teams of each organization. For example, I am a member of the [@starkandwayne](https://github.com/starkandwayne) - an excellent consultancy for Cloud Foundry, Kubernetes, and enterprise cloud systems. Your application also has a `@starkandwayne` organization so I am automatically granted permission (authorization) to read and modify its contents within your application.
 
 If not Github, your application might use Google Accounts (`drnic@starkandwayne.com` belongs to a `@starkandwayne.com` Google Account) or an in-house Microsoft Active Directory organization.
 
